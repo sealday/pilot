@@ -28,6 +28,7 @@ export async function main(argv = process.argv.slice(2)): Promise<CliResult> {
 
 if (import.meta.main) {
   const result = await main();
-  console.log(result.output);
+  const stream = result.exitCode === 0 ? process.stdout : process.stderr;
+  stream.write(`${result.output}\n`);
   process.exit(result.exitCode);
 }
