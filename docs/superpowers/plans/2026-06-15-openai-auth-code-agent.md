@@ -911,7 +911,7 @@ git commit -m "Add structured session runner primitives" \
 - Test: `tests/permissions.test.ts`
 - Test: `tests/workspace-boundary.test.ts`
 
-- [ ] **Step 1: Add policy tests**
+- [x] **Step 1: Add policy tests**
 
 Write `tests/permissions.test.ts`:
 
@@ -951,7 +951,7 @@ describe("isInsideWorkspace", () => {
 });
 ```
 
-- [ ] **Step 2: Implement shell classifier and boundary policy**
+- [x] **Step 2: Implement shell classifier and boundary policy**
 
 Write `src/tools/shell.ts`:
 
@@ -993,7 +993,7 @@ export function decisionForShellRisk(risk: ShellRisk, unattended = false): ToolD
 }
 ```
 
-- [ ] **Step 3: Run policy checks**
+- [x] **Step 3: Run policy checks**
 
 Run:
 
@@ -1004,7 +1004,7 @@ bun run typecheck
 
 Expected: all pass.
 
-- [ ] **Step 4: Commit policy**
+- [x] **Step 4: Commit policy**
 
 ```bash
 git add src/policy src/tools/shell.ts tests/permissions.test.ts tests/workspace-boundary.test.ts
