@@ -2,6 +2,7 @@
 change: design-openai-auth-code-agent
 design-doc: docs/superpowers/specs/2026-06-15-openai-auth-code-agent-design.md
 base-ref: 5ecce008e4ce713736aa53daca41c9fe01b674f3
+archived-with: 2026-06-15-design-openai-auth-code-agent
 ---
 
 # OpenAI Auth Code Agent Implementation Plan
@@ -13,8 +14,6 @@ base-ref: 5ecce008e4ce713736aa53daca41c9fe01b674f3
 **Architecture:** The CLI owns product commands, local session state, policy, context, and memory. Pi remains the auth/model/provider authority through `PiCodexAuthAdapter` and `PiAgentAdapter`; fallback API-key support is local and minimal.
 
 **Tech Stack:** Bun 1.3.x, TypeScript 5.x, Node 24.x runtime APIs, `@earendil-works/pi-coding-agent` 0.79.3, `@earendil-works/pi-agent-core` 0.79.3, Bun test runner.
-
----
 
 ## File Structure
 

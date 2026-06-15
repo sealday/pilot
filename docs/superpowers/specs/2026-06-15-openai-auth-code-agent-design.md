@@ -2,6 +2,8 @@
 comet_change: design-openai-auth-code-agent
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-15-design-openai-auth-code-agent
+status: final
 ---
 
 # OpenAI Auth Code Agent Design
@@ -16,13 +18,11 @@ The design follows the article's core lesson: the harness should become cleaner,
 
 OpenSpec remains canonical for product requirements:
 
-- `openspec/changes/design-openai-auth-code-agent/proposal.md`
-- `openspec/changes/design-openai-auth-code-agent/design.md`
-- `openspec/changes/design-openai-auth-code-agent/specs/openai-auth/spec.md`
-- `openspec/changes/design-openai-auth-code-agent/specs/coding-harness-loop/spec.md`
-- `openspec/changes/design-openai-auth-code-agent/specs/context-cost-control/spec.md`
-- `openspec/changes/design-openai-auth-code-agent/specs/local-memory-governance/spec.md`
-- `openspec/changes/design-openai-auth-code-agent/tasks.md`
+- `openspec/specs/openai-auth/spec.md`
+- `openspec/specs/coding-harness-loop/spec.md`
+- `openspec/specs/context-cost-control/spec.md`
+- `openspec/specs/local-memory-governance/spec.md`
+- `openspec/changes/archive/2026-06-15-design-openai-auth-code-agent/`
 
 This document explains how to implement those requirements.
 
