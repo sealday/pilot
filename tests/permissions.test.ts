@@ -25,6 +25,10 @@ describe("classifyShellCommand", () => {
 
   test("classifies destructive or system-level commands as dangerous", () => {
     expect(classifyShellCommand("rm -rf /tmp/example")).toBe("dangerous");
+    expect(classifyShellCommand("rm -fr /tmp/example")).toBe("dangerous");
+    expect(classifyShellCommand("rm -r -f /tmp/example")).toBe("dangerous");
+    expect(classifyShellCommand("rm -f -r /tmp/example")).toBe("dangerous");
+    expect(classifyShellCommand("  RM   -r   -f   /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("chmod -R 777 /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("chown -R root /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("dd if=/dev/zero of=/tmp/blob")).toBe("dangerous");

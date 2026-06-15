@@ -1,8 +1,6 @@
 export type ShellRisk = "safe" | "mutating" | "dangerous";
 
 const DANGEROUS_PATTERNS = [
-  /\brm\s+-\S*r\S*f\b/,
-  /\brm\s+-\S*f\S*r\b/,
   /\bchmod\s+-R\b/i,
   /\bchown\s+-R\b/i,
   /\bdd\s+[^;&|]*\bif=/,
@@ -28,6 +26,10 @@ const MUTATING_PATTERNS = [
 export function classifyShellCommand(command: string): ShellRisk {
   const normalized = command.trim().toLowerCase();
 
+  if (isDangerousRmCommand(normalized)) {
+    return "dangerous";
+  }
+
   if (DANGEROUS_PATTERNS.some((pattern) => pattern.test(normalized))) {
     return "dangerous";
   }
@@ -37,4 +39,21 @@ export function classifyShellCommand(command: string): ShellRisk {
   }
 
   return "safe";
+}
+
+function isDangerousRmCommand(command: string): boolean {
+  const rmInvocations = command.matchAll(/(?:^|[;&|]\s*)rm(?:\s+([^;&|]*))?/g);
+
+  for (const invocation of rmInvocations) {
+    const args = invocation[1] ?? "";
+    const flags = args.split(/\s+/).filter((arg) => arg.startsWith("-"));
+    const hasRecursive = flags.some((flag) => flag === "--recursive" || flag.includes("r"));
+    const hasForce = flags.some((flag) => flag === "--force" || flag.includes("f"));
+
+    if (hasRecursive && hasForce) {
+      return true;
+    }
+  }
+
+  return false;
 }

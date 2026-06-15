@@ -19,6 +19,10 @@ describe("isInsideWorkspace", () => {
     expect(isInsideWorkspace("/repo", "/repo/../outside/file.ts")).toBe(false);
   });
 
+  test("rejects mixed POSIX workspace and backslash target paths", () => {
+    expect(isInsideWorkspace("/repo", "/repo-other\\..\\repo\\file")).toBe(false);
+  });
+
   test("handles Windows-style paths in Node tests", () => {
     expect(isInsideWorkspace("C:\\repo", "C:\\repo\\src\\file.ts")).toBe(true);
     expect(isInsideWorkspace("C:\\repo", "C:\\repo-other\\file.ts")).toBe(false);
