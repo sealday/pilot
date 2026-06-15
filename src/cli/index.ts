@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import { authCommand } from "./commands/auth.js";
+import { memoryCommand } from "./commands/memory.js";
 import { runCommand } from "./commands/run.js";
 import { redactSecrets } from "../auth/token-redaction.js";
 
@@ -27,12 +28,18 @@ export async function main(argv = process.argv.slice(2)): Promise<CliResult> {
     return { exitCode: 0, output: formatHelp() };
   }
 
-  if (argv[0] === "auth") {
-    return authCommand(argv.slice(1));
+  const [command, ...rest] = argv;
+
+  if (command === "auth") {
+    return authCommand(rest);
   }
 
-  if (argv[0] === "run") {
-    return runCommand(argv.slice(1));
+  if (command === "run") {
+    return runCommand(rest);
+  }
+
+  if (command === "memory") {
+    return memoryCommand(rest);
   }
 
   return { exitCode: 1, output: `${redactSecrets(`Unknown command: ${argv.join(" ")}`)}\n\n${formatHelp()}` };
