@@ -1,7 +1,7 @@
 export type UsageInput = {
-  input?: number;
-  output?: number;
-  cacheRead?: number;
+  input?: unknown;
+  output?: unknown;
+  cacheRead?: unknown;
 };
 
 export type UsageSummary = {
@@ -12,9 +12,9 @@ export type UsageSummary = {
 };
 
 export function normalizeUsage(usage: UsageInput): UsageSummary {
-  const input = usage.input ?? 0;
-  const output = usage.output ?? 0;
-  const cacheRead = usage.cacheRead ?? 0;
+  const input = normalizeUsageField(usage.input);
+  const output = normalizeUsageField(usage.output);
+  const cacheRead = normalizeUsageField(usage.cacheRead);
 
   return {
     input,
@@ -22,4 +22,14 @@ export function normalizeUsage(usage: UsageInput): UsageSummary {
     cacheRead,
     total: input + output,
   };
+}
+
+function normalizeUsageField(value: unknown): number {
+  const number = Number(value ?? 0);
+
+  if (!Number.isFinite(number) || number < 0) {
+    return 0;
+  }
+
+  return number;
 }

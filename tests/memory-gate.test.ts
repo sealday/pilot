@@ -55,7 +55,7 @@ describe("memoryCommand", () => {
     });
     expect(await main(["memory", "forget", "mem_123"])).toEqual({
       exitCode: 0,
-      output: "Forgot memory mem_123",
+      output: "Forgot memory",
     });
   });
 
@@ -64,5 +64,17 @@ describe("memoryCommand", () => {
       exitCode: 1,
       output: "Unknown memory command: export",
     });
+  });
+
+  test("does not echo secret-like memory arguments", async () => {
+    expect(await main(["memory", "forget", "sk-test123456789"])).toEqual({
+      exitCode: 1,
+      output: "Invalid memory id",
+    });
+    const result = await main(["memory", "sk-test123456789"]);
+
+    expect(result.exitCode).toBe(1);
+    expect(result.output).toContain("[REDACTED]");
+    expect(result.output).not.toContain("sk-test123456789");
   });
 });

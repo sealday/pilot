@@ -1,6 +1,7 @@
 import type { CliResult } from "../index.js";
+import { redactSecrets } from "../../auth/token-redaction.js";
 
-const MEMORY_ID_PATTERN = /^[A-Za-z0-9_-]+$/;
+const MEMORY_ID_PATTERN = /^mem_[A-Za-z0-9_-]+$/;
 
 export async function memoryCommand(args: string[]): Promise<CliResult> {
   const subcommand = args[0] ?? "list";
@@ -20,8 +21,8 @@ export async function memoryCommand(args: string[]): Promise<CliResult> {
       return { exitCode: 1, output: "Invalid memory id" };
     }
 
-    return { exitCode: 0, output: `Forgot memory ${id}` };
+    return { exitCode: 0, output: "Forgot memory" };
   }
 
-  return { exitCode: 1, output: `Unknown memory command: ${subcommand}` };
+  return { exitCode: 1, output: redactSecrets(`Unknown memory command: ${subcommand}`) };
 }

@@ -34,6 +34,27 @@ describe("context and cost", () => {
     });
   });
 
+  test("coerces invalid provider usage values safely", () => {
+    expect(normalizeUsage({ input: "10", output: 2, cacheRead: "5" })).toEqual({
+      input: 10,
+      output: 2,
+      cacheRead: 5,
+      total: 12,
+    });
+    expect(normalizeUsage({ input: NaN, output: Infinity, cacheRead: -1 })).toEqual({
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      total: 0,
+    });
+    expect(normalizeUsage({ input: null, output: undefined, cacheRead: "" })).toEqual({
+      input: 0,
+      output: 0,
+      cacheRead: 0,
+      total: 0,
+    });
+  });
+
   test("compacts task state deterministically", () => {
     expect(
       compactContext({
