@@ -615,7 +615,7 @@ git commit -m "Reuse Pi Codex auth for OpenAI access" \
 - Test: `tests/finish-tool.test.ts`
 - Test: `tests/session-runner.test.ts`
 
-- [ ] **Step 1: Add todo and finish tests**
+- [x] **Step 1: Add todo and finish tests**
 
 Write `tests/todo-write.test.ts`:
 
@@ -662,7 +662,7 @@ describe("parseFinishPayload", () => {
 });
 ```
 
-- [ ] **Step 2: Implement todo and finish utilities**
+- [x] **Step 2: Implement todo and finish utilities**
 
 Write `src/tools/todo-write.ts`:
 
@@ -709,7 +709,7 @@ export function parseFinishPayload(input: unknown): FinishPayload {
 }
 ```
 
-- [ ] **Step 3: Add transcript model**
+- [x] **Step 3: Add transcript model**
 
 Write `src/context/transcript.ts`:
 
@@ -730,7 +730,7 @@ export function createTranscript(sessionId: string): SessionTranscript {
 }
 ```
 
-- [ ] **Step 4: Add Pi adapter interface and stub**
+- [x] **Step 4: Add Pi adapter interface and stub**
 
 Write `src/agent/pi-agent-adapter.ts`:
 
@@ -758,7 +758,7 @@ export class StubPiAgentAdapter implements PiAgentAdapter {
 }
 ```
 
-- [ ] **Step 5: Implement session runner**
+- [x] **Step 5: Implement session runner**
 
 Write `src/agent/session-runner.ts`:
 
@@ -801,7 +801,7 @@ export class SessionRunner {
 }
 ```
 
-- [ ] **Step 6: Add runner test**
+- [x] **Step 6: Add runner test**
 
 Write `tests/session-runner.test.ts`:
 
@@ -833,7 +833,7 @@ describe("SessionRunner", () => {
 });
 ```
 
-- [ ] **Step 7: Wire run command**
+- [x] **Step 7: Wire run command**
 
 Write `src/cli/commands/run.ts`:
 
@@ -877,7 +877,7 @@ Add before the unknown command return:
 if (command === "run") return runCommand(rest);
 ```
 
-- [ ] **Step 8: Run session checks**
+- [x] **Step 8: Run session checks**
 
 Run:
 
@@ -888,7 +888,7 @@ bun run typecheck
 
 Expected: all pass.
 
-- [ ] **Step 9: Commit session runner**
+- [x] **Step 9: Commit session runner**
 
 ```bash
 git add src/agent src/context src/tools src/cli tests/todo-write.test.ts tests/finish-tool.test.ts tests/session-runner.test.ts
