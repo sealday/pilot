@@ -1,0 +1,16 @@
+workflow: full
+phase: build
+build_mode: null
+isolation: null
+verify_mode: null
+base_ref: null
+design_doc: docs/superpowers/specs/2026-06-15-openai-auth-code-agent-design.md
+plan: null
+verify_result: pending
+verification_report: null
+branch_status: pending
+created_at: 2026-06-15
+verified_at: null
+archived: false
+handoff_context: openspec/changes/design-openai-auth-code-agent/.comet/handoff/design-context.json
+handoff_hash: e410e9d2ebc900a2e6262947cf4a7d4429ac7c1bd0250efa1bcfd5267a442f2f

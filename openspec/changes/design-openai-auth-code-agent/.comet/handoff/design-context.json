@@ -1,0 +1,17 @@
+{
+  "change": "design-openai-auth-code-agent",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "e410e9d2ebc900a2e6262947cf4a7d4429ac7c1bd0250efa1bcfd5267a442f2f",
+  "files": [
+    { "path": "openspec/changes/design-openai-auth-code-agent/proposal.md", "sha256": "bbbcfbecd9f09e7cd95657c7fa17cd6e044cc314bbf3379273b3a1190035d2ce" },
+    { "path": "openspec/changes/design-openai-auth-code-agent/design.md", "sha256": "4b8a32b1ad7004c5432f6a9cb29e5a40d0ba384070d974da0cdf4553b898ef4a" },
+    { "path": "openspec/changes/design-openai-auth-code-agent/tasks.md", "sha256": "f7b1d09e4484245fe9f298850f2600a09754be04b8c09d3adeb8a5023c6158e7" },
+    { "path": "openspec/changes/design-openai-auth-code-agent/specs/coding-harness-loop/spec.md", "sha256": "47543da887f4b9bb1fc61192cf9e13a51702f718bee116ac0e483687ce389bb6" },
+    { "path": "openspec/changes/design-openai-auth-code-agent/specs/context-cost-control/spec.md", "sha256": "ff30123e99374a5c1ada36b3d1efea40e38a83a7f1d8f83ae74cb8948fae16ba" },
+    { "path": "openspec/changes/design-openai-auth-code-agent/specs/local-memory-governance/spec.md", "sha256": "dc622f72184dedcf7b330ea74121ccc65fb91b07fa2e15ed6b48199ad65e1b4a" },
+    { "path": "openspec/changes/design-openai-auth-code-agent/specs/openai-auth/spec.md", "sha256": "e155079ec853e56538d1d19df18a80b8d6544d8469f9858d59af4579bb663d00" }
+  ]
+}
