@@ -57,7 +57,7 @@ base-ref: 5ecce008e4ce713736aa53daca41c9fe01b674f3
 - Create: `src/cli/index.ts`
 - Test: `tests/cli-help.test.ts`
 
-- [ ] **Step 1: Create package metadata**
+- [x] **Step 1: Create package metadata**
 
 Write `package.json`:
 
@@ -87,7 +87,7 @@ Write `package.json`:
 }
 ```
 
-- [ ] **Step 2: Create strict TypeScript config**
+- [x] **Step 2: Create strict TypeScript config**
 
 Write `tsconfig.json`:
 
@@ -110,7 +110,7 @@ Write `tsconfig.json`:
 }
 ```
 
-- [ ] **Step 3: Add initial CLI dispatcher test**
+- [x] **Step 3: Add initial CLI dispatcher test**
 
 Write `tests/cli-help.test.ts`:
 
@@ -128,13 +128,13 @@ describe("CLI help", () => {
 });
 ```
 
-- [ ] **Step 4: Run test and verify it fails**
+- [x] **Step 4: Run test and verify it fails**
 
 Run: `bun test tests/cli-help.test.ts`
 
 Expected: FAIL because `src/cli/index.ts` does not exist.
 
-- [ ] **Step 5: Implement CLI dispatcher**
+- [x] **Step 5: Implement CLI dispatcher**
 
 Write `src/cli/index.ts`:
 
@@ -174,7 +174,7 @@ if (import.meta.main) {
 }
 ```
 
-- [ ] **Step 6: Run scaffold checks**
+- [x] **Step 6: Run scaffold checks**
 
 Run:
 
@@ -186,7 +186,7 @@ bun run typecheck
 
 Expected: all pass.
 
-- [ ] **Step 7: Commit scaffold**
+- [x] **Step 7: Commit scaffold**
 
 ```bash
 git add package.json tsconfig.json src/cli/index.ts tests/cli-help.test.ts bun.lock
