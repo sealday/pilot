@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { authCommand } from "./commands/auth.js";
+
 export type CliResult = {
   exitCode: number;
   output: string;
@@ -21,6 +23,10 @@ export function formatHelp(): string {
 export async function main(argv = process.argv.slice(2)): Promise<CliResult> {
   if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") {
     return { exitCode: 0, output: formatHelp() };
+  }
+
+  if (argv[0] === "auth") {
+    return authCommand(argv.slice(1));
   }
 
   return { exitCode: 1, output: `Unknown command: ${argv.join(" ")}\n\n${formatHelp()}` };
