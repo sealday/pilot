@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 
 import { authCommand } from "./commands/auth.js";
+import { runCommand } from "./commands/run.js";
 import { redactSecrets } from "../auth/token-redaction.js";
 
 export type CliResult = {
@@ -28,6 +29,10 @@ export async function main(argv = process.argv.slice(2)): Promise<CliResult> {
 
   if (argv[0] === "auth") {
     return authCommand(argv.slice(1));
+  }
+
+  if (argv[0] === "run") {
+    return runCommand(argv.slice(1));
   }
 
   return { exitCode: 1, output: `${redactSecrets(`Unknown command: ${argv.join(" ")}`)}\n\n${formatHelp()}` };
