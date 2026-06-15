@@ -46,52 +46,22 @@ function isDangerousRmCommand(command: string): boolean {
 
   for (const segment of segments) {
     const tokens = segment.trim().split(/\s+/).filter(Boolean);
-    const rmIndex = findRmTokenIndex(tokens);
+    for (const [index, token] of tokens.entries()) {
+      if (commandBasename(token) !== "rm") {
+        continue;
+      }
 
-    if (rmIndex === -1) {
-      continue;
-    }
+      const flags = tokens.slice(index + 1).filter((arg) => arg.startsWith("-"));
+      const hasRecursive = flags.some((flag) => flag === "--recursive" || flag.includes("r"));
+      const hasForce = flags.some((flag) => flag === "--force" || flag.includes("f"));
 
-    const flags = tokens.slice(rmIndex + 1).filter((arg) => arg.startsWith("-"));
-    const hasRecursive = flags.some((flag) => flag === "--recursive" || flag.includes("r"));
-    const hasForce = flags.some((flag) => flag === "--force" || flag.includes("f"));
-
-    if (hasRecursive && hasForce) {
-      return true;
+      if (hasRecursive && hasForce) {
+        return true;
+      }
     }
   }
 
   return false;
-}
-
-function findRmTokenIndex(tokens: string[]): number {
-  let scanningWrapperPrefix = true;
-
-  for (const [index, token] of tokens.entries()) {
-    if (
-      scanningWrapperPrefix &&
-      (isCommandWrapper(token) || isWrapperOption(token) || isEnvironmentAssignment(token))
-    ) {
-      continue;
-    }
-
-    scanningWrapperPrefix = false;
-    return commandBasename(token) === "rm" ? index : -1;
-  }
-
-  return -1;
-}
-
-function isCommandWrapper(token: string): boolean {
-  return token === "sudo" || token === "command" || token === "env";
-}
-
-function isWrapperOption(token: string): boolean {
-  return token === "--" || /^-[A-Za-z]+$/.test(token);
-}
-
-function isEnvironmentAssignment(token: string): boolean {
-  return /^[A-Z_][A-Z0-9_]*=.*/i.test(token);
 }
 
 function commandBasename(token: string): string {

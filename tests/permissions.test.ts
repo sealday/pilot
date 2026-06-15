@@ -31,9 +31,12 @@ describe("classifyShellCommand", () => {
     expect(classifyShellCommand("  RM   -r   -f   /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("sudo rm -rf /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("sudo -n rm -rf /tmp/example")).toBe("dangerous");
+    expect(classifyShellCommand("sudo -u root rm -rf /tmp/example")).toBe("dangerous");
+    expect(classifyShellCommand("sudo --user root rm -rf /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("sudo -- rm -rf /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("env FOO=1 rm -rf /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("env -i rm -rf /tmp/example")).toBe("dangerous");
+    expect(classifyShellCommand("env -u FOO rm -rf /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("command rm -rf /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("command -p rm -rf /tmp/example")).toBe("dangerous");
     expect(classifyShellCommand("/bin/rm -rf /tmp/example")).toBe("dangerous");
