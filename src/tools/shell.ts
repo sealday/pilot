@@ -65,11 +65,17 @@ function isDangerousRmCommand(command: string): boolean {
 }
 
 function findRmTokenIndex(tokens: string[]): number {
+  let scanningWrapperPrefix = true;
+
   for (const [index, token] of tokens.entries()) {
-    if (isCommandWrapper(token) || isEnvironmentAssignment(token)) {
+    if (
+      scanningWrapperPrefix &&
+      (isCommandWrapper(token) || isWrapperOption(token) || isEnvironmentAssignment(token))
+    ) {
       continue;
     }
 
+    scanningWrapperPrefix = false;
     return commandBasename(token) === "rm" ? index : -1;
   }
 
@@ -78,6 +84,10 @@ function findRmTokenIndex(tokens: string[]): number {
 
 function isCommandWrapper(token: string): boolean {
   return token === "sudo" || token === "command" || token === "env";
+}
+
+function isWrapperOption(token: string): boolean {
+  return token === "--" || /^-[A-Za-z]+$/.test(token);
 }
 
 function isEnvironmentAssignment(token: string): boolean {
