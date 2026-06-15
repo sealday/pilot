@@ -3,7 +3,16 @@ import type { TodoItem } from "../tools/todo-write.js";
 
 export type PiToolCall = {
   id: string;
-  name: "todo_write" | "finish";
+  name:
+    | "file_read"
+    | "patch_edit"
+    | "shell"
+    | "grep"
+    | "glob"
+    | "git"
+    | "web_fetch"
+    | "todo_write"
+    | "finish";
   input: unknown;
 };
 
