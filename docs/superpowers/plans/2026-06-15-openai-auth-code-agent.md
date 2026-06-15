@@ -1260,7 +1260,7 @@ git commit -m "Add stable context and governed memory primitives" \
 - Create: `tests/e2e-smoke.test.ts`
 - Modify: `openspec/changes/design-openai-auth-code-agent/tasks.md`
 
-- [ ] **Step 1: Add e2e smoke test**
+- [x] **Step 1: Add e2e smoke test**
 
 Write `tests/e2e-smoke.test.ts`:
 
@@ -1283,7 +1283,7 @@ describe("pi-code smoke", () => {
 });
 ```
 
-- [ ] **Step 2: Add README**
+- [x] **Step 2: Add README**
 
 Write `README.md`:
 
@@ -1340,11 +1340,11 @@ bun run build
 ```
 ```
 
-- [ ] **Step 3: Mark OpenSpec implementation tasks complete as slices pass**
+- [x] **Step 3: Mark OpenSpec implementation tasks complete as slices pass**
 
 After all code and docs checks pass, update `openspec/changes/design-openai-auth-code-agent/tasks.md` by changing each `- [ ]` to `- [x]`. Do this only after the relevant implementation and test evidence exists.
 
-- [ ] **Step 4: Run full verification**
+- [x] **Step 4: Run full verification**
 
 Run:
 
@@ -1357,7 +1357,7 @@ openspec validate design-openai-auth-code-agent --strict
 
 Expected: all pass.
 
-- [ ] **Step 5: Commit final implementation state**
+- [x] **Step 5: Commit final implementation state**
 
 ```bash
 git add README.md tests/e2e-smoke.test.ts openspec/changes/design-openai-auth-code-agent/tasks.md
