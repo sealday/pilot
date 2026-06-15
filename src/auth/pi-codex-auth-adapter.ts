@@ -29,8 +29,8 @@ export class PiCodexAuthAdapter {
 
     try {
       authFile = await readJson<PiAuthFile>(this.authPath);
-    } catch {
-      return this.statusWithProblem("invalid-auth-file");
+    } catch (error) {
+      return this.statusWithProblem(classifyReadError(error));
     }
 
     if (authFile === null) {
@@ -93,12 +93,20 @@ function isOAuthEntry(value: unknown): value is OAuthEntry {
     return false;
   }
 
-    return (
-      value.type === "oauth" &&
-      (typeof value.expires === "number" || typeof value.expires === "string") &&
-      (value.accountId === undefined || typeof value.accountId === "string")
-    );
+  return (
+    value.type === "oauth" &&
+    (typeof value.expires === "number" || typeof value.expires === "string") &&
+    (value.accountId === undefined || typeof value.accountId === "string")
+  );
+}
+
+function classifyReadError(error: unknown): AuthProblem {
+  if (error instanceof Error && error.message === "Invalid JSON file") {
+    return "invalid-auth-file";
   }
+
+  return "auth-file-unreadable";
+}
 
 function normalizeExpires(value: number | string): string | null {
   const expires = new Date(value);

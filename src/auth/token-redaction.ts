@@ -7,15 +7,27 @@ const PATTERNS = [
 ];
 
 export function redactSecrets(value: unknown): string {
-  let text = typeof value === "string" ? value : JSON.stringify(value);
-
-  if (text === undefined) {
-    text = String(value);
-  }
+  let text = stringifyForRedaction(value);
 
   for (const pattern of PATTERNS) {
     text = text.replace(pattern, REDACTED);
   }
 
   return text;
+}
+
+function stringifyForRedaction(value: unknown): string {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (value instanceof Error) {
+    return value.message;
+  }
+
+  try {
+    return JSON.stringify(value) ?? String(value);
+  } catch {
+    return String(value);
+  }
 }

@@ -3,6 +3,7 @@ export type AuthProblem =
   | "expired"
   | "invalid-provider"
   | "invalid-auth-file"
+  | "auth-file-unreadable"
   | "missing-api-key";
 
 export type AuthStatus = {

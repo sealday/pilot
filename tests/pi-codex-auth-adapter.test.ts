@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mkdtemp } from "node:fs/promises";
+import { mkdir, mkdtemp } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { PiCodexAuthAdapter } from "../src/auth/pi-codex-auth-adapter.js";
@@ -118,6 +118,16 @@ describe("PiCodexAuthAdapter", () => {
     expect(JSON.stringify(status)).not.toContain("rt_secret.secret");
   });
 
+  test("reports unreadable auth paths separately from malformed JSON", async () => {
+    const homeDir = await tempHome();
+    await mkdir(join(homeDir, ".pi", "agent", "auth.json"), { recursive: true });
+
+    const status = await new PiCodexAuthAdapter({ homeDir }).status();
+
+    expect(status.authenticated).toBe(false);
+    expect(status.problem).toBe("auth-file-unreadable");
+  });
+
   test("returns login and logout guidance without mutating credentials", async () => {
     const adapter = new PiCodexAuthAdapter({ homeDir: await tempHome() });
 
@@ -169,6 +179,28 @@ describe("authCommand", () => {
     expect(result.exitCode).toBe(0);
     expect(result.output).toContain('"source": "env"');
     expect(result.output).toContain('"authenticated": true');
+    expect(result.output).not.toContain("sk-test123456789");
+  });
+
+  test("auth status preserves Pi problems when env fallback is available", async () => {
+    const result = await authCommand(["status"], {
+      piAdapter: {
+        status: async () => ({
+          provider: "openai-codex",
+          source: "pi",
+          authenticated: false,
+          problem: "invalid-auth-file",
+        }),
+        login: async () => "login guidance",
+        logout: async () => "logout guidance",
+      },
+      env: { OPENAI_API_KEY: "sk-test123456789" },
+    });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.output).toContain('"source": "env"');
+    expect(result.output).toContain('"piStatus"');
+    expect(result.output).toContain('"problem": "invalid-auth-file"');
     expect(result.output).not.toContain("sk-test123456789");
   });
 

@@ -28,7 +28,7 @@ export async function authCommand(args: string[], deps: AuthCommandDeps = {}): P
     const piStatus = await piAdapter.status(deps.now);
     const status = piStatus.authenticated ? piStatus : apiKeyFallbackStatus(deps.env ?? process.env);
     const outputStatus = status.authenticated
-      ? status
+      ? { ...status, ...(piStatus.authenticated ? {} : { piStatus }) }
       : {
           ...status,
           remediation: "Run `pi` interactively, then enter `/login` and choose OpenAI Codex auth.",
