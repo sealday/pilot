@@ -1032,7 +1032,7 @@ git commit -m "Constrain shell and workspace mutations" \
 - Test: `tests/context-cost.test.ts`
 - Test: `tests/memory-gate.test.ts`
 
-- [ ] **Step 1: Add context and memory tests**
+- [x] **Step 1: Add context and memory tests**
 
 Write `tests/context-cost.test.ts`:
 
@@ -1075,7 +1075,7 @@ describe("shouldAcceptMemory", () => {
 });
 ```
 
-- [ ] **Step 2: Implement stable prefix and runtime context**
+- [x] **Step 2: Implement stable prefix and runtime context**
 
 Write `src/agent/system-prompt.ts`:
 
@@ -1099,7 +1099,7 @@ export function buildRuntimeContext(input: { workspace: string; authProvider: st
 }
 ```
 
-- [ ] **Step 3: Implement usage normalizer and compactor**
+- [x] **Step 3: Implement usage normalizer and compactor**
 
 Write `src/context/cost-meter.ts`:
 
@@ -1145,7 +1145,7 @@ export function compactContext(input: CompactInput): string {
 }
 ```
 
-- [ ] **Step 4: Implement memory governance**
+- [x] **Step 4: Implement memory governance**
 
 Write `src/memory/gate.ts`:
 
@@ -1197,7 +1197,7 @@ export function hasConflict(candidate: string, existing: string[]): boolean {
 }
 ```
 
-- [ ] **Step 5: Wire memory command**
+- [x] **Step 5: Wire memory command**
 
 Write `src/cli/commands/memory.ts`:
 
@@ -1228,7 +1228,7 @@ Add before unknown command return:
 if (command === "memory") return memoryCommand(rest);
 ```
 
-- [ ] **Step 6: Run context and memory checks**
+- [x] **Step 6: Run context and memory checks**
 
 Run:
 
@@ -1239,7 +1239,7 @@ bun run typecheck
 
 Expected: all pass.
 
-- [ ] **Step 7: Commit context and memory**
+- [x] **Step 7: Commit context and memory**
 
 ```bash
 git add src/agent/system-prompt.ts src/context src/memory src/cli tests/context-cost.test.ts tests/memory-gate.test.ts
