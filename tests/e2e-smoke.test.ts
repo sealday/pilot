@@ -55,6 +55,26 @@ describe("e2e smoke", () => {
     expect(toolEvents.at(0)?.input).toEqual({ path: "sample.txt" });
     expect(toolEvents.at(1)?.output).toEqual({ changedPath: "sample.txt", replacements: 1 });
   });
+
+  test("persisted transcripts redact secret-like tool inputs and outputs", async () => {
+    const cwd = await tempWorkspace();
+    const secret = "sk-test123456789";
+    const runner = new SessionRunner({
+      cwd,
+      now: () => new Date("2026-06-15T00:00:00.000Z"),
+      sessionId: () => "redacted-session",
+      tools: {
+        fetch: (async () => new Response(`body ${secret}`, { status: 200 })) as unknown as typeof fetch,
+      },
+      adapter: secretAdapter(secret),
+    });
+
+    await runner.run(`fetch ${secret}`);
+
+    const persisted = await readFile(join(cwd, ".pi-code", "sessions", "redacted-session", "transcript.json"), "utf8");
+    expect(persisted).not.toContain(secret);
+    expect(persisted).toContain("[REDACTED]");
+  });
 });
 
 function firstReleaseAdapter(): PiAgentAdapter {
@@ -76,7 +96,7 @@ function firstReleaseAdapter(): PiAgentAdapter {
           {
             id: "shell-1",
             name: "shell",
-            input: { command: "test \"$(cat sample.txt)\" = \"alpha\ngamma\"" },
+            input: { command: "grep -q gamma sample.txt" },
           },
           {
             id: "todo-1",
@@ -91,6 +111,34 @@ function firstReleaseAdapter(): PiAgentAdapter {
               summary: "Fixture workspace smoke completed.",
               changedFiles: ["sample.txt"],
               verification: ["shell test command exited 0"],
+              risks: [],
+            },
+          },
+        ],
+      };
+    },
+  };
+}
+
+function secretAdapter(secret: string): PiAgentAdapter {
+  return {
+    async runTurn() {
+      return {
+        assistantMessage: `Fetching ${secret}`,
+        toolCalls: [
+          {
+            id: "web-1",
+            name: "web_fetch",
+            input: { url: `https://example.test/data?key=${secret}` },
+          },
+          {
+            id: "finish-1",
+            name: "finish",
+            input: {
+              status: "complete",
+              summary: `Fetched ${secret}`,
+              changedFiles: [],
+              verification: [`saw ${secret}`],
               risks: [],
             },
           },

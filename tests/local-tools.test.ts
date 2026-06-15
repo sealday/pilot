@@ -1,11 +1,18 @@
 import { describe, expect, test } from "bun:test";
-import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { access, mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileRead, gitRead, globSearch, grepSearch, shellExecute, webFetch } from "../src/tools/local-execution.js";
+import { fileRead, gitRead, globSearch, grepSearch, patchEdit, shellExecute, webFetch } from "../src/tools/local-execution.js";
 
 async function tempWorkspace(): Promise<string> {
   return mkdtemp(join(tmpdir(), "pi-code-tools-"));
+}
+
+async function pathExists(path: string): Promise<boolean> {
+  return access(path).then(
+    () => true,
+    () => false,
+  );
 }
 
 describe("local tool execution", () => {
@@ -15,12 +22,73 @@ describe("local tool execution", () => {
     await expect(fileRead({ path: "../outside.txt" }, { workspace })).rejects.toThrow("path escapes workspace");
   });
 
+  test("rejects file reads through workspace symlinks", async () => {
+    const workspace = await tempWorkspace();
+    const outside = await mkdtemp(join(tmpdir(), "pi-code-outside-"));
+    await writeFile(join(outside, "secret.txt"), "secret\n", "utf8");
+    await symlink(join(outside, "secret.txt"), join(workspace, "link.txt"));
+
+    await expect(fileRead({ path: "link.txt" }, { workspace })).rejects.toThrow("path cannot be a symlink");
+  });
+
+  test("rejects patch edits through workspace symlinks", async () => {
+    const workspace = await tempWorkspace();
+    const outside = await mkdtemp(join(tmpdir(), "pi-code-outside-"));
+    const outsideFile = join(outside, "secret.txt");
+    await writeFile(outsideFile, "alpha\n", "utf8");
+    await symlink(outsideFile, join(workspace, "link.txt"));
+
+    await expect(
+      patchEdit({ path: "link.txt", search: "alpha", replace: "owned" }, { workspace }),
+    ).rejects.toThrow("path cannot be a symlink");
+    await expect(readFile(outsideFile, "utf8")).resolves.toBe("alpha\n");
+  });
+
+  test("rejects grep roots that are symlinked directories", async () => {
+    const workspace = await tempWorkspace();
+    const outside = await mkdtemp(join(tmpdir(), "pi-code-outside-"));
+    await writeFile(join(outside, "secret.txt"), "needle outside\n", "utf8");
+    await symlink(outside, join(workspace, "linked"));
+
+    await expect(grepSearch({ pattern: "needle", path: "linked" }, { workspace })).rejects.toThrow(
+      "path cannot be a symlink",
+    );
+    await expect(grepSearch({ pattern: "needle", path: "." }, { workspace })).resolves.toEqual({ matches: [] });
+  });
+
   test("rejects mutating shell commands in unattended mode", async () => {
     const workspace = await tempWorkspace();
 
     await expect(shellExecute({ command: "touch created.txt" }, { workspace })).rejects.toThrow(
       "shell command rejected by policy: mutating",
     );
+  });
+
+  test("rejects shell redirection and write-oriented safe-classified commands", async () => {
+    const workspace = await tempWorkspace();
+    await writeFile(join(workspace, "sample.txt"), "alpha\n", "utf8");
+
+    await expect(shellExecute({ command: "printf owned > created.txt" }, { workspace })).rejects.toThrow(
+      "shell command rejected by policy: safe",
+    );
+    await expect(shellExecute({ command: "sed -i s/alpha/beta/ sample.txt" }, { workspace })).rejects.toThrow(
+      "shell command rejected by policy: safe",
+    );
+    await expect(shellExecute({ command: "rm sample.txt" }, { workspace })).rejects.toThrow(
+      "shell command rejected by policy: safe",
+    );
+    await expect(pathExists(join(workspace, "created.txt"))).resolves.toBe(false);
+    await expect(readFile(join(workspace, "sample.txt"), "utf8")).resolves.toBe("alpha\n");
+  });
+
+  test("allows narrow read-only shell checks", async () => {
+    const workspace = await tempWorkspace();
+    await writeFile(join(workspace, "sample.txt"), "alpha\nneedle\n", "utf8");
+
+    const result = await shellExecute({ command: "grep -q needle sample.txt" }, { workspace });
+
+    expect(result.exitCode).toBe(0);
+    expect(result.risk).toBe("safe");
   });
 
   test("grep and glob return workspace-relative text matches", async () => {
@@ -46,6 +114,22 @@ describe("local tool execution", () => {
     expect(result.args).toEqual(["status", "--short"]);
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain("?? sample.txt");
+  });
+
+  test("git rejects mutating commands and write-capable diff options", async () => {
+    const workspace = await tempWorkspace();
+    const outside = join(await mkdtemp(join(tmpdir(), "pi-code-git-outside-")), "diff.txt");
+
+    await expect(gitRead({ args: ["branch", "new-branch"] }, { workspace })).rejects.toThrow(
+      "git tool only supports safe read-only status/diff style operations",
+    );
+    await expect(gitRead({ args: ["diff", "--no-index", "a.txt", "b.txt"] }, { workspace })).rejects.toThrow(
+      "unsupported git diff option: --no-index",
+    );
+    await expect(gitRead({ args: ["diff", `--output=${outside}`] }, { workspace })).rejects.toThrow(
+      `unsupported git diff option: --output=${outside}`,
+    );
+    await expect(pathExists(outside)).resolves.toBe(false);
   });
 
   test("web_fetch uses injected fetch and returns a text snippet", async () => {

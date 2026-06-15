@@ -50,9 +50,9 @@ The real Pi model/tool streaming integration remains behind `PiAgentAdapter`.
 
 ## Security Model
 
-File and path tools enforce the workspace boundary with `isInsideWorkspace`. Mutating file tools run through `SessionRunner`'s ordered tool loop. Shell commands are classified with `classifyShellCommand` and resolved by `decisionForShellRisk`; unattended runs reject mutating or dangerous commands. The `git` tool only allows a small read-only command set. `web_fetch` only accepts HTTP and HTTPS URLs and can be dependency-injected for deterministic tests.
+File and path tools enforce the workspace boundary with lexical checks plus real-path validation, and symlinks are rejected or skipped before reads, writes, and searches. Mutating file tools run through `SessionRunner`'s ordered tool loop. Shell commands are classified with `classifyShellCommand`, resolved by `decisionForShellRisk`, and then constrained to a narrow read-only allowlist for unattended runs. The `git` tool only allows a small read-only status/diff command set. `web_fetch` only accepts HTTP and HTTPS URLs and can be dependency-injected for deterministic tests.
 
-Full transcript events are persisted under `.pi-code/sessions/<session-id>/transcript.json`, including tool inputs and outputs. Default CLI run output intentionally omits the full transcript and returns only the structured finish summary.
+Transcript events are persisted under `.pi-code/sessions/<session-id>/transcript.json` with secret-like strings redacted from prompts, messages, tool inputs, tool outputs, and finish payloads. Default CLI run output intentionally omits the full transcript and returns only the structured finish summary.
 
 ## Checks
 

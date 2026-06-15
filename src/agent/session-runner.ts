@@ -1,4 +1,5 @@
 import { join } from "node:path";
+import { redactSecrets } from "../auth/token-redaction.js";
 import { parseFinishPayload, type FinishPayload } from "./finish-tool.js";
 import { StubPiAgentAdapter, type PiAgentAdapter, type PiToolCall } from "./pi-agent-adapter.js";
 import { appendTranscriptEvent, createTranscript, type Transcript } from "../context/transcript.js";
@@ -149,7 +150,10 @@ export class SessionRunner {
   }
 
   private async persistTranscript(transcript: Transcript): Promise<void> {
-    await writeJson(join(this.cwd, ".pi-code", "sessions", transcript.sessionId, "transcript.json"), transcript);
+    await writeJson(
+      join(this.cwd, ".pi-code", "sessions", transcript.sessionId, "transcript.json"),
+      redactTranscript(transcript),
+    );
   }
 }
 
@@ -157,4 +161,28 @@ export function validateSessionId(sessionId: string): void {
   if (sessionId.length === 0 || !SESSION_ID_PATTERN.test(sessionId)) {
     throw new Error("invalid session id");
   }
+}
+
+function redactTranscript(transcript: Transcript): Transcript {
+  return redactTranscriptValue(transcript) as Transcript;
+}
+
+function redactTranscriptValue(value: unknown): unknown {
+  if (typeof value === "string") {
+    return redactSecrets(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map((item) => redactTranscriptValue(item));
+  }
+
+  if (value !== null && typeof value === "object") {
+    const redacted: Record<string, unknown> = {};
+    for (const [key, nestedValue] of Object.entries(value)) {
+      redacted[key] = redactTranscriptValue(nestedValue);
+    }
+    return redacted;
+  }
+
+  return value;
 }

@@ -1,5 +1,5 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
-import { basename, join, relative, resolve } from "node:path";
+import { lstat, readdir, readFile, realpath, writeFile } from "node:fs/promises";
+import { join, relative, resolve } from "node:path";
 import { decisionForShellRisk } from "../policy/permissions.js";
 import { isInsideWorkspace } from "../policy/workspace-boundary.js";
 import { classifyShellCommand } from "./shell.js";
@@ -8,7 +8,31 @@ const TEXT_SNIPPET_LIMIT = 8_000;
 const SEARCH_RESULT_LIMIT = 100;
 const COMMAND_OUTPUT_LIMIT = 12_000;
 const WEB_SNIPPET_LIMIT = 4_000;
-const SAFE_GIT_COMMANDS = new Set(["status", "diff", "show", "log", "rev-parse", "branch"]);
+const SAFE_GIT_STATUS_OPTIONS = new Set([
+  "--short",
+  "-s",
+  "--porcelain",
+  "--porcelain=v1",
+  "--porcelain=v2",
+  "--branch",
+  "-b",
+  "--untracked-files",
+  "--untracked-files=all",
+  "--untracked-files=normal",
+  "--untracked-files=no",
+]);
+const SAFE_GIT_DIFF_OPTIONS = new Set([
+  "--",
+  "--cached",
+  "--staged",
+  "--check",
+  "--stat",
+  "--shortstat",
+  "--name-only",
+  "--name-status",
+  "--color=never",
+  "--no-color",
+]);
 
 export type LocalToolDeps = {
   fetch?: typeof fetch;
@@ -20,7 +44,7 @@ export type LocalToolContext = {
 };
 
 export async function fileRead(input: unknown, context: LocalToolContext): Promise<{ path: string; content: string }> {
-  const path = workspacePath(input, context.workspace);
+  const path = await workspacePath(input, context.workspace);
   const content = await readFile(path.absolutePath, "utf8");
   return { path: path.relativePath, content: snippet(content, TEXT_SNIPPET_LIMIT) };
 }
@@ -30,7 +54,7 @@ export async function patchEdit(
   context: LocalToolContext,
 ): Promise<{ changedPath: string; replacements: number }> {
   const payload = objectInput(input);
-  const path = workspacePath(payload, context.workspace);
+  const path = await workspacePath(payload, context.workspace);
   const search = requiredString(payload.search, "patch_edit search");
   const replace = requiredString(payload.replace, "patch_edit replace");
   if (search.length === 0) {
@@ -55,7 +79,7 @@ export async function shellExecute(
   const command = requiredString(payload.command, "shell command");
   const risk = classifyShellCommand(command);
   const decision = decisionForShellRisk(risk, true);
-  if (decision !== "allow") {
+  if (decision !== "allow" || !(await isAllowedReadOnlyShellCommand(command, context.workspace))) {
     throw new Error(`shell command rejected by policy: ${risk}`);
   }
 
@@ -69,7 +93,7 @@ export async function grepSearch(
 ): Promise<{ matches: Array<{ path: string; line: number; text: string }> }> {
   const payload = objectInput(input);
   const pattern = requiredString(payload.pattern, "grep pattern");
-  const root = workspacePath({ path: optionalString(payload.path) ?? "." }, context.workspace);
+  const root = await workspacePath({ path: optionalString(payload.path) ?? "." }, context.workspace);
   const files = await listWorkspaceFiles(root.absolutePath, context.workspace);
   const matches: Array<{ path: string; line: number; text: string }> = [];
 
@@ -113,15 +137,7 @@ export async function gitRead(
 ): Promise<{ args: string[]; exitCode: number; stdout: string; stderr: string }> {
   const payload = objectInput(input);
   const args = parseGitArgs(payload);
-  const gitCommand = args[0];
-  if (gitCommand === undefined || !SAFE_GIT_COMMANDS.has(gitCommand)) {
-    throw new Error("git tool only supports safe read-only status/diff style operations");
-  }
-
-  const unsafePathArg = args.find((arg) => looksLikeEscapingPathArg(arg, context.workspace));
-  if (unsafePathArg !== undefined) {
-    throw new Error(`git path argument escapes workspace: ${unsafePathArg}`);
-  }
+  validateGitArgs(args, context.workspace);
 
   const result = await runCommand(["git", ...args], context.workspace);
   return { args, ...result };
@@ -144,7 +160,7 @@ export async function webFetch(
   return { url: parsed.toString(), status: response.status, text: snippet(text, WEB_SNIPPET_LIMIT) };
 }
 
-function workspacePath(input: unknown, workspace: string): { absolutePath: string; relativePath: string } {
+async function workspacePath(input: unknown, workspace: string): Promise<{ absolutePath: string; relativePath: string }> {
   const payload = objectInput(input);
   const rawPath = requiredString(payload.path, "path");
   const absolutePath = resolve(workspace, rawPath);
@@ -152,6 +168,7 @@ function workspacePath(input: unknown, workspace: string): { absolutePath: strin
     throw new Error("path escapes workspace");
   }
 
+  await assertRealPathInsideWorkspace(absolutePath, workspace, "path");
   return { absolutePath, relativePath: toWorkspaceRelative(workspace, absolutePath) };
 }
 
@@ -179,6 +196,7 @@ async function listWorkspaceFiles(root: string, workspace: string): Promise<stri
   if (!isInsideWorkspace(workspace, root)) {
     throw new Error("search path escapes workspace");
   }
+  await assertRealPathInsideWorkspace(root, workspace, "search path");
 
   const entries = await readdir(root, { withFileTypes: true });
   const files: string[] = [];
@@ -189,14 +207,31 @@ async function listWorkspaceFiles(root: string, workspace: string): Promise<stri
     }
 
     const absolutePath = join(root, entry.name);
-    if (entry.isDirectory()) {
+    const stats = await lstat(absolutePath);
+    if (stats.isSymbolicLink()) {
+      continue;
+    }
+
+    if (stats.isDirectory()) {
       files.push(...await listWorkspaceFiles(absolutePath, workspace));
-    } else if (entry.isFile()) {
+    } else if (stats.isFile()) {
       files.push(absolutePath);
     }
   }
 
   return files;
+}
+
+async function assertRealPathInsideWorkspace(absolutePath: string, workspace: string, label: string): Promise<void> {
+  const stats = await lstat(absolutePath);
+  if (stats.isSymbolicLink()) {
+    throw new Error(`${label} cannot be a symlink`);
+  }
+
+  const [workspaceRealPath, targetRealPath] = await Promise.all([realpath(workspace), realpath(absolutePath)]);
+  if (!isInsideWorkspace(workspaceRealPath, targetRealPath)) {
+    throw new Error(`${label} escapes workspace`);
+  }
 }
 
 function globToRegExp(pattern: string): RegExp {
@@ -235,16 +270,143 @@ function parseGitArgs(payload: Record<string, unknown>): string[] {
   throw new Error("git args must be a string array");
 }
 
-function looksLikeEscapingPathArg(arg: string, workspace: string): boolean {
-  if (arg.startsWith("-") || arg.includes("=") || arg === "--") {
+async function isAllowedReadOnlyShellCommand(command: string, workspace: string): Promise<boolean> {
+  const trimmed = command.trim();
+  if (trimmed.length === 0 || /[<>&|;`$"'\\\r\n]/.test(trimmed)) {
     return false;
   }
 
-  if (!arg.includes("/") && basename(arg) === arg) {
+  const tokens = trimmed.split(/\s+/);
+  const executable = tokens[0];
+  const args = tokens.slice(1);
+  if (executable === "pwd") {
+    return args.length === 0;
+  }
+
+  if (executable === "ls") {
+    return areAllowedShellPathArgs(args.filter((arg) => !arg.startsWith("-")), workspace);
+  }
+
+  if (executable === "cat") {
+    return args.length > 0 && areAllowedShellPathArgs(args, workspace);
+  }
+
+  if (executable === "test") {
+    return args.length === 2 && ["-f", "-r", "-s"].includes(args[0] ?? "") && isAllowedShellPathArg(args[1] ?? "", workspace);
+  }
+
+  if (executable === "grep") {
+    const options = args.filter((arg) => arg.startsWith("-"));
+    if (!options.every((option) => option === "-q" || option === "-n")) {
+      return false;
+    }
+
+    const positional = args.filter((arg) => !arg.startsWith("-"));
+    if (positional.length < 2) {
+      return false;
+    }
+
+    return areAllowedShellPathArgs(positional.slice(1), workspace);
+  }
+
+  return false;
+}
+
+async function areAllowedShellPathArgs(args: string[], workspace: string): Promise<boolean> {
+  for (const arg of args) {
+    if (!(await isAllowedShellPathArg(arg, workspace))) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+async function isAllowedShellPathArg(arg: string, workspace: string): Promise<boolean> {
+  if (arg.length === 0 || arg.startsWith("-")) {
     return false;
   }
 
-  return !isInsideWorkspace(workspace, resolve(workspace, arg));
+  const absolutePath = resolve(workspace, arg);
+  if (!isInsideWorkspace(workspace, absolutePath)) {
+    return false;
+  }
+
+  try {
+    await assertRealPathInsideWorkspace(absolutePath, workspace, "shell path");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function validateGitArgs(args: string[], workspace: string): void {
+  const gitCommand = args[0];
+  const rest = args.slice(1);
+  if (gitCommand === "status") {
+    validateGitStatusArgs(rest, workspace);
+    return;
+  }
+
+  if (gitCommand === "diff") {
+    validateGitDiffArgs(rest, workspace);
+    return;
+  }
+
+  throw new Error("git tool only supports safe read-only status/diff style operations");
+}
+
+function validateGitStatusArgs(args: string[], workspace: string): void {
+  let pathMode = false;
+  for (const arg of args) {
+    if (arg === "--") {
+      pathMode = true;
+      continue;
+    }
+
+    if (!pathMode && arg.startsWith("-")) {
+      if (!SAFE_GIT_STATUS_OPTIONS.has(arg)) {
+        throw new Error(`unsupported git status option: ${arg}`);
+      }
+      continue;
+    }
+
+    validateGitPathArg(arg, workspace);
+  }
+}
+
+function validateGitDiffArgs(args: string[], workspace: string): void {
+  let pathMode = false;
+  for (const arg of args) {
+    if (arg === "--") {
+      pathMode = true;
+      continue;
+    }
+
+    if (!pathMode && arg.startsWith("-")) {
+      if (arg === "--no-index" || arg === "--output" || arg.startsWith("--output=")) {
+        throw new Error(`unsupported git diff option: ${arg}`);
+      }
+
+      if (!SAFE_GIT_DIFF_OPTIONS.has(arg) && !/^-U\d+$/.test(arg)) {
+        throw new Error(`unsupported git diff option: ${arg}`);
+      }
+      continue;
+    }
+
+    validateGitPathArg(arg, workspace);
+  }
+}
+
+function validateGitPathArg(arg: string, workspace: string): void {
+  if (arg.includes(":")) {
+    throw new Error(`git path argument is not a workspace path: ${arg}`);
+  }
+
+  const absolutePath = resolve(workspace, arg);
+  if (!isInsideWorkspace(workspace, absolutePath)) {
+    throw new Error(`git path argument escapes workspace: ${arg}`);
+  }
 }
 
 async function runCommand(
