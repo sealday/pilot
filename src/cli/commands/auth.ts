@@ -1,6 +1,7 @@
 import type { AuthStatus } from "../../auth/auth-status.js";
 import { apiKeyFallbackStatus, type ApiKeyEnv } from "../../auth/api-key-fallback.js";
 import { PiCodexAuthAdapter } from "../../auth/pi-codex-auth-adapter.js";
+import { redactSecrets } from "../../auth/token-redaction.js";
 
 export type AuthCommandResult = {
   exitCode: number;
@@ -26,10 +27,17 @@ export async function authCommand(args: string[], deps: AuthCommandDeps = {}): P
   if (subcommand === "status") {
     const piStatus = await piAdapter.status(deps.now);
     const status = piStatus.authenticated ? piStatus : apiKeyFallbackStatus(deps.env ?? process.env);
+    const outputStatus = status.authenticated
+      ? status
+      : {
+          ...status,
+          remediation: "Run `pi` interactively, then enter `/login` and choose OpenAI Codex auth.",
+          piStatus,
+        };
 
     return {
-      exitCode: 0,
-      output: JSON.stringify(status, null, 2),
+      exitCode: outputStatus.authenticated ? 0 : 1,
+      output: JSON.stringify(outputStatus, null, 2),
     };
   }
 
@@ -49,6 +57,6 @@ export async function authCommand(args: string[], deps: AuthCommandDeps = {}): P
 
   return {
     exitCode: 1,
-    output: `Unknown auth command: ${args.join(" ")}`,
+    output: redactSecrets(`Unknown auth command: ${args.join(" ")}`),
   };
 }

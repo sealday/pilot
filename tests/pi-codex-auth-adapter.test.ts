@@ -51,6 +51,26 @@ describe("PiCodexAuthAdapter", () => {
     expect(status).not.toHaveProperty("refresh");
   });
 
+  test("accepts Pi OAuth numeric expiry metadata", async () => {
+    const homeDir = await tempHome();
+    await writePiAuth(homeDir, {
+      "openai-codex": {
+        type: "oauth",
+        access: "aaa.bbb.ccc",
+        refresh: "rt_secret.secret",
+        expires: Date.parse("2099-01-01T00:00:00.000Z"),
+        accountId: "acct_123456789",
+      },
+    });
+
+    const status = await new PiCodexAuthAdapter({ homeDir }).status(new Date("2026-06-15T00:00:00.000Z"));
+
+    expect(status.authenticated).toBe(true);
+    expect(status.expiresAt).toBe("2099-01-01T00:00:00.000Z");
+    expect(JSON.stringify(status)).not.toContain("aaa.bbb.ccc");
+    expect(JSON.stringify(status)).not.toContain("rt_secret.secret");
+  });
+
   test("reports expired OAuth metadata as unauthenticated", async () => {
     const homeDir = await tempHome();
     await writePiAuth(homeDir, {
@@ -152,6 +172,27 @@ describe("authCommand", () => {
     expect(result.output).not.toContain("sk-test123456789");
   });
 
+  test("auth status includes Pi login guidance when no credential is available", async () => {
+    const result = await authCommand(["status"], {
+      piAdapter: {
+        status: async () => ({
+          provider: "openai-codex",
+          source: "pi",
+          authenticated: false,
+          problem: "missing-login",
+        }),
+        login: async () => "Run `pi`, then `/login`.",
+        logout: async () => "Run `pi`, then `/logout`.",
+      },
+      env: {},
+    });
+
+    expect(result.exitCode).toBe(1);
+    expect(result.output).toContain("/login");
+    expect(result.output).toContain("openai-codex");
+    expect(result.output).not.toContain("sk-test123456789");
+  });
+
   test("auth login and logout return Pi guidance", async () => {
     const deps = {
       piAdapter: {
@@ -176,8 +217,8 @@ describe("authCommand", () => {
     expect(logout.output).toContain("/logout");
   });
 
-  test("unknown auth subcommands fail", async () => {
-    const result = await authCommand(["refresh"], {
+  test("unknown auth subcommands fail without leaking secret-like arguments", async () => {
+    const result = await authCommand(["refresh", "sk-test123456789"], {
       piAdapter: {
         status: async () => ({
           provider: "openai-codex",
@@ -193,5 +234,7 @@ describe("authCommand", () => {
 
     expect(result.exitCode).toBe(1);
     expect(result.output).toContain("Unknown auth command: refresh");
+    expect(result.output).toContain("[REDACTED]");
+    expect(result.output).not.toContain("sk-test123456789");
   });
 });

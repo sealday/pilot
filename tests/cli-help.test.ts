@@ -24,6 +24,13 @@ describe("CLI help", () => {
     expect(result.output).toContain("pi-code run [prompt]");
   });
 
+  test("redacts secret-like unknown command arguments", async () => {
+    const result = await main(["bad", "sk-test123456789"]);
+    expect(result.exitCode).toBe(1);
+    expect(result.output).toContain("[REDACTED]");
+    expect(result.output).not.toContain("sk-test123456789");
+  });
+
   test("entrypoint writes failures to stderr", async () => {
     const proc = Bun.spawn([process.execPath, "src/cli/index.ts", "bad"], {
       cwd: process.cwd(),

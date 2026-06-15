@@ -13,7 +13,7 @@ type PiAuthFile = Record<string, unknown>;
 
 type OAuthEntry = {
   type: "oauth";
-  expires: string;
+  expires: number | string;
   accountId?: string;
 };
 
@@ -93,14 +93,14 @@ function isOAuthEntry(value: unknown): value is OAuthEntry {
     return false;
   }
 
-  return (
-    value.type === "oauth" &&
-    typeof value.expires === "string" &&
-    (value.accountId === undefined || typeof value.accountId === "string")
-  );
-}
+    return (
+      value.type === "oauth" &&
+      (typeof value.expires === "number" || typeof value.expires === "string") &&
+      (value.accountId === undefined || typeof value.accountId === "string")
+    );
+  }
 
-function normalizeExpires(value: string): string | null {
+function normalizeExpires(value: number | string): string | null {
   const expires = new Date(value);
 
   if (Number.isNaN(expires.getTime())) {
