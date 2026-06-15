@@ -1,4 +1,5 @@
 import { lstat, readdir, readFile, realpath, writeFile } from "node:fs/promises";
+import { devNull } from "node:os";
 import { join, relative, resolve } from "node:path";
 import { decisionForShellRisk } from "../policy/permissions.js";
 import { isInsideWorkspace } from "../policy/workspace-boundary.js";
@@ -139,7 +140,7 @@ export async function gitRead(
   const args = parseGitArgs(payload);
   validateGitArgs(args, context.workspace);
 
-  const result = await runCommand(["git", ...args], context.workspace);
+  const result = await runCommand(["git", ...hardenGitArgs(args)], context.workspace, { env: hardenedGitEnv() });
   return { args, ...result };
 }
 
@@ -409,15 +410,61 @@ function validateGitPathArg(arg: string, workspace: string): void {
   }
 }
 
+function hardenGitArgs(args: string[]): string[] {
+  const gitCommand = args[0];
+  const rest = args.slice(1);
+  const common = [
+    "-c",
+    "core.fsmonitor=false",
+    "-c",
+    "core.untrackedCache=false",
+    "-c",
+    "diff.external=",
+  ];
+
+  if (gitCommand === "diff") {
+    return [...common, "diff", "--no-ext-diff", "--no-textconv", ...rest];
+  }
+
+  return [...common, ...args];
+}
+
+function hardenedGitEnv(): Record<string, string> {
+  const env: Record<string, string> = {};
+  for (const [key, value] of Object.entries(process.env)) {
+    if (typeof value === "string") {
+      env[key] = value;
+    }
+  }
+
+  delete env.GIT_EXTERNAL_DIFF;
+  env.GIT_CONFIG_GLOBAL = devNull;
+  env.GIT_CONFIG_NOSYSTEM = "1";
+  env.GIT_OPTIONAL_LOCKS = "0";
+  env.GIT_PAGER = "cat";
+  env.GIT_TERMINAL_PROMPT = "0";
+  env.PAGER = "cat";
+  return env;
+}
+
 async function runCommand(
   command: string[],
   cwd: string,
+  options: { env?: Record<string, string> } = {},
 ): Promise<{ exitCode: number; stdout: string; stderr: string }> {
-  const proc = Bun.spawn(command, {
-    cwd,
-    stdout: "pipe",
-    stderr: "pipe",
-  });
+  const proc =
+    options.env === undefined
+      ? Bun.spawn(command, {
+          cwd,
+          stdout: "pipe",
+          stderr: "pipe",
+        })
+      : Bun.spawn(command, {
+          cwd,
+          env: options.env,
+          stdout: "pipe",
+          stderr: "pipe",
+        });
   const [stdout, stderr, exitCode] = await Promise.all([
     new Response(proc.stdout).text(),
     new Response(proc.stderr).text(),

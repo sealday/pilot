@@ -179,7 +179,7 @@ function redactTranscriptValue(value: unknown): unknown {
   if (value !== null && typeof value === "object") {
     const redacted: Record<string, unknown> = {};
     for (const [key, nestedValue] of Object.entries(value)) {
-      redacted[key] = redactTranscriptValue(nestedValue);
+      redacted[redactSecrets(key)] = redactTranscriptValue(nestedValue);
     }
     return redacted;
   }

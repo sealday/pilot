@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { access, mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
+import { access, chmod, mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileRead, gitRead, globSearch, grepSearch, patchEdit, shellExecute, webFetch } from "../src/tools/local-execution.js";
@@ -130,6 +130,46 @@ describe("local tool execution", () => {
       `unsupported git diff option: --output=${outside}`,
     );
     await expect(pathExists(outside)).resolves.toBe(false);
+  });
+
+  test("git diff ignores configured external diff helpers", async () => {
+    const workspace = await tempWorkspace();
+    await Bun.spawn(["git", "init"], { cwd: workspace }).exited;
+    await writeFile(join(workspace, "sample.txt"), "alpha\n", "utf8");
+    await Bun.spawn(["git", "add", "sample.txt"], { cwd: workspace }).exited;
+    await Bun.spawn(
+      ["git", "-c", "user.email=test@example.test", "-c", "user.name=Test", "commit", "-m", "init"],
+      { cwd: workspace },
+    ).exited;
+    await writeFile(join(workspace, "sample.txt"), "beta\n", "utf8");
+
+    const marker = join(workspace, "external-diff-ran");
+    const helper = join(workspace, "external-diff.sh");
+    await writeFile(helper, `#!/bin/sh\nprintf ran > ${JSON.stringify(marker)}\nexit 0\n`, "utf8");
+    await chmod(helper, 0o755);
+    await Bun.spawn(["git", "config", "diff.external", helper], { cwd: workspace }).exited;
+
+    const result = await gitRead({ args: ["diff"] }, { workspace });
+
+    expect(result.stdout).toContain("sample.txt");
+    await expect(pathExists(marker)).resolves.toBe(false);
+  });
+
+  test("git status ignores configured fsmonitor helpers", async () => {
+    const workspace = await tempWorkspace();
+    await Bun.spawn(["git", "init"], { cwd: workspace }).exited;
+    await writeFile(join(workspace, "sample.txt"), "alpha\n", "utf8");
+
+    const marker = join(workspace, "fsmonitor-ran");
+    const helper = join(workspace, "fsmonitor.sh");
+    await writeFile(helper, `#!/bin/sh\nprintf ran > ${JSON.stringify(marker)}\nexit 0\n`, "utf8");
+    await chmod(helper, 0o755);
+    await Bun.spawn(["git", "config", "core.fsmonitor", helper], { cwd: workspace }).exited;
+
+    const result = await gitRead({ args: ["status", "--short"] }, { workspace });
+
+    expect(result.stdout).toContain("?? sample.txt");
+    await expect(pathExists(marker)).resolves.toBe(false);
   });
 
   test("web_fetch uses injected fetch and returns a text snippet", async () => {

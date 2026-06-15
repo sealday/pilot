@@ -129,7 +129,7 @@ function secretAdapter(secret: string): PiAgentAdapter {
           {
             id: "web-1",
             name: "web_fetch",
-            input: { url: `https://example.test/data?key=${secret}` },
+            input: { url: `https://example.test/data?key=${secret}`, nested: { [secret]: "secret key name" } },
           },
           {
             id: "finish-1",
