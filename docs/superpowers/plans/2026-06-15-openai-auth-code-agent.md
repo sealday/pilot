@@ -214,7 +214,7 @@ git commit -m "Enable a testable Bun CLI baseline" \
 - Test: `tests/pi-codex-auth-adapter.test.ts`
 - Test: `tests/api-key-fallback.test.ts`
 
-- [ ] **Step 1: Write redaction tests**
+- [x] **Step 1: Write redaction tests**
 
 Write `tests/auth-redaction.test.ts`:
 
@@ -235,7 +235,7 @@ describe("redactSecrets", () => {
 });
 ```
 
-- [ ] **Step 2: Implement redaction**
+- [x] **Step 2: Implement redaction**
 
 Write `src/auth/token-redaction.ts`:
 
@@ -251,7 +251,7 @@ export function redactSecrets(value: string): string {
 }
 ```
 
-- [ ] **Step 3: Add storage path helpers**
+- [x] **Step 3: Add storage path helpers**
 
 Write `src/storage/paths.ts`:
 
@@ -283,7 +283,7 @@ export function workspaceSessionDir(options: PathOptions = {}): string {
 }
 ```
 
-- [ ] **Step 4: Add safe JSON helpers**
+- [x] **Step 4: Add safe JSON helpers**
 
 Write `src/storage/json-db.ts`:
 
@@ -306,7 +306,7 @@ export async function writeJsonFile(path: string, value: unknown): Promise<void>
 }
 ```
 
-- [ ] **Step 5: Add auth status types**
+- [x] **Step 5: Add auth status types**
 
 Write `src/auth/auth-status.ts`:
 
@@ -324,7 +324,7 @@ export type AuthStatus = {
 };
 ```
 
-- [ ] **Step 6: Write Pi auth adapter tests**
+- [x] **Step 6: Write Pi auth adapter tests**
 
 Write `tests/pi-codex-auth-adapter.test.ts`:
 
@@ -375,7 +375,7 @@ describe("PiCodexAuthAdapter", () => {
 });
 ```
 
-- [ ] **Step 7: Implement Pi auth adapter**
+- [x] **Step 7: Implement Pi auth adapter**
 
 Write `src/auth/pi-codex-auth-adapter.ts`:
 
@@ -452,7 +452,7 @@ async function assertPiAvailable(): Promise<void> {
 }
 ```
 
-- [ ] **Step 8: Add API-key fallback tests and implementation**
+- [x] **Step 8: Add API-key fallback tests and implementation**
 
 Write `tests/api-key-fallback.test.ts`:
 
@@ -492,7 +492,7 @@ export function apiKeyFallbackStatus(env: NodeJS.ProcessEnv = process.env): Auth
 }
 ```
 
-- [ ] **Step 9: Wire auth commands**
+- [x] **Step 9: Wire auth commands**
 
 Write `src/cli/commands/auth.ts`:
 
@@ -576,7 +576,7 @@ if (import.meta.main) {
 }
 ```
 
-- [ ] **Step 10: Run auth checks**
+- [x] **Step 10: Run auth checks**
 
 Run:
 
@@ -587,7 +587,7 @@ bun run typecheck
 
 Expected: all pass.
 
-- [ ] **Step 11: Commit auth reuse**
+- [x] **Step 11: Commit auth reuse**
 
 ```bash
 git add src/auth src/storage src/cli tests/auth-redaction.test.ts tests/pi-codex-auth-adapter.test.ts tests/api-key-fallback.test.ts
