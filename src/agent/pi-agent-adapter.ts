@@ -28,23 +28,23 @@ export class StubPiAgentAdapter implements PiAgentAdapter {
     const promptSummary = input.prompt.length > 0 ? input.prompt : "empty prompt";
 
     return {
-      assistantMessage: `Stub Pi agent handled: ${promptSummary}`,
+      assistantMessage: `Stub Pi agent cannot run real work for: ${promptSummary}`,
       toolCalls: [
         {
           id: "todo-1",
           name: "todo_write",
           input: {
-            todos: [{ text: "Return a structured finish payload", status: "completed" }],
+            todos: [{ text: "Connect a real Pi adapter", status: "pending" }],
           },
         },
         {
           id: "finish-1",
           name: "finish",
           input: {
-            status: "complete",
-            summary: `Stub session completed for prompt: ${promptSummary}`,
+            status: "blocked",
+            summary: "Real Pi adapter is not connected.",
             changedFiles: [],
-            verification: ["Stub adapter returned deterministic finish payload."],
+            verification: [],
             risks: ["Real Pi adapter is not connected yet."],
           },
         },

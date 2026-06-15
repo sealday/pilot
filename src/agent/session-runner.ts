@@ -18,6 +18,8 @@ export type SessionResult = FinishPayload & {
   transcript: Transcript;
 };
 
+const SESSION_ID_PATTERN = /^[A-Za-z0-9_-]+$/;
+
 export class SessionRunner {
   private readonly adapter: PiAgentAdapter;
   private readonly cwd: string;
@@ -33,6 +35,7 @@ export class SessionRunner {
 
   async run(prompt: string): Promise<SessionResult> {
     const sessionId = this.sessionIdFactory();
+    validateSessionId(sessionId);
     const transcript = createTranscript(sessionId, this.cwd);
     const timestamp = () => this.now().toISOString();
     let todos: TodoItem[] = [];
@@ -113,5 +116,11 @@ export class SessionRunner {
 
   private async persistTranscript(transcript: Transcript): Promise<void> {
     await writeJson(join(this.cwd, ".pi-code", "sessions", transcript.sessionId, "transcript.json"), transcript);
+  }
+}
+
+export function validateSessionId(sessionId: string): void {
+  if (sessionId.length === 0 || !SESSION_ID_PATTERN.test(sessionId)) {
+    throw new Error("invalid session id");
   }
 }

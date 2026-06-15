@@ -1,4 +1,6 @@
 import { SessionRunner, type SessionRunnerDeps } from "../../agent/session-runner.js";
+import { redactSecrets } from "../../auth/token-redaction.js";
+import type { SessionResult } from "../../agent/session-runner.js";
 
 export type RunCommandResult = {
   exitCode: number;
@@ -20,6 +22,18 @@ export async function runCommand(args: string[], deps: RunCommandDeps = {}): Pro
   const result = await new SessionRunner(deps).run(prompt);
   return {
     exitCode: result.status === "complete" ? 0 : 1,
-    output: JSON.stringify(result, null, 2),
+    output: redactSecrets(JSON.stringify(formatRunOutput(result), null, 2)),
+  };
+}
+
+function formatRunOutput(result: SessionResult) {
+  return {
+    status: result.status,
+    sessionId: result.sessionId,
+    summary: result.summary,
+    changedFiles: result.changedFiles,
+    verification: result.verification,
+    risks: result.risks,
+    todos: result.todos,
   };
 }
