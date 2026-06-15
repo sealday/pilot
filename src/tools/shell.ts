@@ -42,11 +42,17 @@ export function classifyShellCommand(command: string): ShellRisk {
 }
 
 function isDangerousRmCommand(command: string): boolean {
-  const rmInvocations = command.matchAll(/(?:^|[;&|]\s*)rm(?:\s+([^;&|]*))?/g);
+  const segments = command.split(/[;&|]+/);
 
-  for (const invocation of rmInvocations) {
-    const args = invocation[1] ?? "";
-    const flags = args.split(/\s+/).filter((arg) => arg.startsWith("-"));
+  for (const segment of segments) {
+    const tokens = segment.trim().split(/\s+/).filter(Boolean);
+    const rmIndex = findRmTokenIndex(tokens);
+
+    if (rmIndex === -1) {
+      continue;
+    }
+
+    const flags = tokens.slice(rmIndex + 1).filter((arg) => arg.startsWith("-"));
     const hasRecursive = flags.some((flag) => flag === "--recursive" || flag.includes("r"));
     const hasForce = flags.some((flag) => flag === "--force" || flag.includes("f"));
 
@@ -56,4 +62,28 @@ function isDangerousRmCommand(command: string): boolean {
   }
 
   return false;
+}
+
+function findRmTokenIndex(tokens: string[]): number {
+  for (const [index, token] of tokens.entries()) {
+    if (isCommandWrapper(token) || isEnvironmentAssignment(token)) {
+      continue;
+    }
+
+    return commandBasename(token) === "rm" ? index : -1;
+  }
+
+  return -1;
+}
+
+function isCommandWrapper(token: string): boolean {
+  return token === "sudo" || token === "command" || token === "env";
+}
+
+function isEnvironmentAssignment(token: string): boolean {
+  return /^[A-Z_][A-Z0-9_]*=.*/i.test(token);
+}
+
+function commandBasename(token: string): string {
+  return token.split("/").at(-1) ?? token;
 }
