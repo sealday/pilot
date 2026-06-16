@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import { mkdtemp, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { main } from "../src/cli/index.js";
 import { runCommand } from "../src/cli/commands/run.js";
 import { SessionRunner } from "../src/agent/session-runner.js";
 import type { PiAgentAdapter } from "../src/agent/pi-agent-adapter.js";
@@ -113,7 +112,7 @@ describe("runCommand", () => {
   });
 
   test("pilot run defaults to blocked when no real adapter is connected", async () => {
-    const result = await main(["run", "inspect"]);
+    const result = await runCommand(["inspect"], { cwd: await tempWorkspace() });
 
     expect(result.exitCode).toBe(1);
     expect(JSON.parse(result.output).status).toBe("blocked");

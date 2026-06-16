@@ -359,7 +359,7 @@ Expected: all commands pass.
 Run:
 
 ```bash
-rg -n "pi-code|\\.pi-code" package.json README.md packages/pilot/src packages/pilot/tests openspec/specs
+rg -n -P "pi-code(?!x)|\\.pi-code" package.json README.md packages/pilot/src packages/pilot/tests openspec/specs
 ```
 
 Expected: no matches in live root manifest, README, package source, package tests, or main specs after archive. Before archive, matches in `openspec/specs` are acceptable only if the delta specs are present and `openspec validate --all --strict` passes; record that in the commit message.

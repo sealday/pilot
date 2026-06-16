@@ -3,6 +3,7 @@ import { mkdtemp, readFile, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { main } from "../src/cli/index.js";
+import { runCommand } from "../src/cli/commands/run.js";
 import { SessionRunner } from "../src/agent/session-runner.js";
 import type { PiAgentAdapter } from "../src/agent/pi-agent-adapter.js";
 
@@ -20,7 +21,7 @@ describe("e2e smoke", () => {
   });
 
   test("default run blocks instead of faking completion", async () => {
-    const result = await main(["run", "inspect"]);
+    const result = await runCommand(["inspect"], { cwd: await tempWorkspace() });
 
     expect(result.exitCode).toBe(1);
     const payload = JSON.parse(result.output);
