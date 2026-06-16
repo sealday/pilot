@@ -27,6 +27,25 @@ describe("CLI help", () => {
     expect(env.PI_CODING_AGENT_DIR).toBeUndefined();
   });
 
+  test("preserves caller-provided Pi session directory overrides", async () => {
+    const calls: string[][] = [];
+    const env: NodeJS.ProcessEnv = {
+      PI_CODING_AGENT_SESSION_DIR: "/tmp/custom-pi-sessions",
+    };
+
+    const result = await main([], {
+      cwd: "/tmp/pilot-workspace",
+      env,
+      piInteractive: async (args) => {
+        calls.push(args);
+      },
+    });
+
+    expect(result).toEqual({ exitCode: 0, output: "" });
+    expect(calls).toEqual([[]]);
+    expect(env.PI_CODING_AGENT_SESSION_DIR).toBe("/tmp/custom-pi-sessions");
+  });
+
   test("returns help for explicit help flags", async () => {
     for (const argv of [["--help"], ["-h"]]) {
       const result = await main(argv);
