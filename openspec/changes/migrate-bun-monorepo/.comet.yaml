@@ -5,7 +5,7 @@ isolation: null
 verify_mode: null
 base_ref: 1a4765252f43792aee4c440a7f6e02a05c0e59f5
 design_doc: docs/superpowers/specs/2026-06-16-migrate-bun-monorepo-design.md
-plan: null
+plan: docs/superpowers/plans/2026-06-16-migrate-bun-monorepo.md
 verify_result: pending
 verification_report: null
 branch_status: pending
