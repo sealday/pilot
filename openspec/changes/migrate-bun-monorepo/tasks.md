@@ -17,9 +17,3 @@
 - [x] 3.2 Run and fix root-level `bun run typecheck`.
 - [x] 3.3 Run and fix root-level `bun run build`.
 - [x] 3.4 Smoke-test direct CLI execution from the repository root with Bun.
-
-## 4. Delivery
-
-- [ ] 4.1 Merge the verified development branch into `main`.
-- [ ] 4.2 Push `main` to `origin`.
-- [ ] 4.3 Delete remote branches other than `main`.
