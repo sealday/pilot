@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { PiCodexAuthAdapter } from "../src/auth/pi-auth-adapter.js";
+import { PiCodexAuthAdapter } from "../src/auth/pi-codex-auth-adapter.js";
 import { authCommand } from "../src/cli/commands/auth.js";
 
 async function tempHome(): Promise<string> {
