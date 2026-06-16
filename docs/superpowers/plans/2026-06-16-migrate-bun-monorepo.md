@@ -432,7 +432,7 @@ openspec validate --all --strict
 
 Expected: merge succeeds and validation passes on `main`. This was completed before archive so Comet could mark `branch_status: handled`.
 
-- [ ] **Step 4: Push main**
+- [x] **Step 4: Push main**
 
 Run:
 
@@ -442,7 +442,7 @@ git push -u origin main
 
 Expected: remote `origin/main` points at the verified merged result.
 
-- [ ] **Step 5: Delete remote branches other than main**
+- [x] **Step 5: Delete remote branches other than main**
 
 List remote branches:
 
