@@ -1,0 +1,16 @@
+workflow: full
+phase: build
+build_mode: null
+isolation: null
+verify_mode: null
+base_ref: 1a4765252f43792aee4c440a7f6e02a05c0e59f5
+design_doc: docs/superpowers/specs/2026-06-16-migrate-bun-monorepo-design.md
+plan: null
+verify_result: pending
+verification_report: null
+branch_status: pending
+created_at: 2026-06-16
+verified_at: null
+archived: false
+handoff_context: openspec/changes/migrate-bun-monorepo/.comet/handoff/design-context.json
+handoff_hash: e63403ba5f75e81000b7d18490b4f1bc65195644df2396b3d8618f16264c03b1

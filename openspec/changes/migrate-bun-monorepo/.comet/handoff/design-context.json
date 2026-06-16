@@ -1,0 +1,16 @@
+{
+  "change": "migrate-bun-monorepo",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "e63403ba5f75e81000b7d18490b4f1bc65195644df2396b3d8618f16264c03b1",
+  "files": [
+    { "path": "openspec/changes/migrate-bun-monorepo/proposal.md", "sha256": "2d5359159d17d51edd75add48da4a6306dc0011f16cfa5f257b3d6d1f0cf9731" },
+    { "path": "openspec/changes/migrate-bun-monorepo/design.md", "sha256": "6e54ea90c5cac882a53996246776554f3828008a27a10fb77a02d4104f198140" },
+    { "path": "openspec/changes/migrate-bun-monorepo/tasks.md", "sha256": "adf6195fbe01a713da7d7a58dbdb8ddc1582ef3db951f02afe06b5306c279f58" },
+    { "path": "openspec/changes/migrate-bun-monorepo/specs/coding-harness-loop/spec.md", "sha256": "25078da693e83d9af584d7b5ff125557aa56f899003bac3c8bc1deb6f8c69f06" },
+    { "path": "openspec/changes/migrate-bun-monorepo/specs/openai-auth/spec.md", "sha256": "9c8f773c9ee88e6495cb17d1a4b4ca1c873b9f1b640d826e805c3de751315923" },
+    { "path": "openspec/changes/migrate-bun-monorepo/specs/repository-workspace/spec.md", "sha256": "521ba2b0bb3920f7a4985abea89974335cfe98c74727b4cdebdb6910aad91363" }
+  ]
+}
