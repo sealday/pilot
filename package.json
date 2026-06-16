@@ -6,10 +6,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "bun --cwd packages/pilot run build",
+    "build": "bun --cwd=packages/pilot run build",
     "lint": "bun run typecheck",
-    "pilot": "bun --cwd packages/pilot run cli",
-    "test": "bun --cwd packages/pilot run test",
-    "typecheck": "bun --cwd packages/pilot run typecheck"
+    "pilot": "bun --cwd=packages/pilot run cli",
+    "test": "bun --cwd=packages/pilot run test",
+    "typecheck": "bun --cwd=packages/pilot run typecheck"
   }
 }
