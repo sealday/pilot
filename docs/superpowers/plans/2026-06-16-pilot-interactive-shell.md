@@ -2,6 +2,7 @@
 change: pilot-interactive-shell
 design-doc: docs/superpowers/specs/2026-06-16-pilot-interactive-shell-design.md
 base-ref: b9d03baff15c08ecf98f74640616a389a1d57061
+archived-with: 2026-06-16-pilot-interactive-shell
 ---
 
 # Pilot Interactive Shell Implementation Plan
@@ -13,8 +14,6 @@ base-ref: b9d03baff15c08ecf98f74640616a389a1d57061
 **Architecture:** Add a small Pi interactive wrapper and a testable CLI dispatch boundary. No-argument `pilot` delegates to `@earendil-works/pi-coding-agent` while `--help`, `auth`, `run`, and `memory` continue through pilot-owned handlers.
 
 **Tech Stack:** Bun, TypeScript, Bun test, `@earendil-works/pi-coding-agent`, OpenSpec, Comet.
-
----
 
 ## File Structure
 

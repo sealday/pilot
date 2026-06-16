@@ -2,6 +2,8 @@
 comet_change: pilot-interactive-shell
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-16-pilot-interactive-shell
+status: final
 ---
 
 # Pilot Interactive Shell Design
