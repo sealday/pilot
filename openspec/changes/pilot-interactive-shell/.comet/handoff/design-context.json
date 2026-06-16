@@ -1,0 +1,16 @@
+{
+  "change": "pilot-interactive-shell",
+  "phase": "design",
+  "mode": "compact",
+  "canonical_spec": "openspec",
+  "generated_by": "comet-handoff.sh",
+  "context_hash": "172648c81b96db1dc653e546b634addd6090f022f6123fabf80306e5943ba4c5",
+  "files": [
+    { "path": "openspec/changes/pilot-interactive-shell/proposal.md", "sha256": "4a9fd880ff60a9867f316aabcf55f18b4b53150920ce8e3f326d8ef15a1edbd5" },
+    { "path": "openspec/changes/pilot-interactive-shell/design.md", "sha256": "0d7c09d131ebbfc34958e220f15d14d9b522bc5f7b4b5036bbc629d5408dd87f" },
+    { "path": "openspec/changes/pilot-interactive-shell/tasks.md", "sha256": "d5c709bbc7b588f0a8dc9a65f95aded4bc659d01c360916aab9a8325a71eb055" },
+    { "path": "openspec/changes/pilot-interactive-shell/specs/coding-harness-loop/spec.md", "sha256": "34d91d6cabd3d082d5024d453687c1941c40c2372a96beff98e14cbcc4c0c871" },
+    { "path": "openspec/changes/pilot-interactive-shell/specs/openai-auth/spec.md", "sha256": "9aefd1a1be882e83ba25b5bc641fef0180b7100cba72dc394e5ebd1d6453c20e" },
+    { "path": "openspec/changes/pilot-interactive-shell/specs/repository-workspace/spec.md", "sha256": "a89cd8fa7d79f974b52a65c9e36725a2ec638fd49ef4ab2ef12315949f376cfb" }
+  ]
+}

@@ -1,0 +1,16 @@
+workflow: full
+phase: build
+build_mode: null
+isolation: null
+verify_mode: null
+base_ref: b9d03baff15c08ecf98f74640616a389a1d57061
+design_doc: docs/superpowers/specs/2026-06-16-pilot-interactive-shell-design.md
+plan: docs/superpowers/plans/2026-06-16-pilot-interactive-shell.md
+verify_result: pending
+verification_report: null
+branch_status: pending
+created_at: 2026-06-16
+verified_at: null
+archived: false
+handoff_context: openspec/changes/pilot-interactive-shell/.comet/handoff/design-context.json
+handoff_hash: 172648c81b96db1dc653e546b634addd6090f022f6123fabf80306e5943ba4c5
