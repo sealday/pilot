@@ -2,6 +2,8 @@
 comet_change: migrate-bun-monorepo
 role: technical-design
 canonical_spec: openspec
+archived-with: 2026-06-16-migrate-bun-monorepo
+status: final
 ---
 
 # Pilot Bun Monorepo Design

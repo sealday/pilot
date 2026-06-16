@@ -2,6 +2,7 @@
 change: migrate-bun-monorepo
 design-doc: docs/superpowers/specs/2026-06-16-migrate-bun-monorepo-design.md
 base-ref: eefeb0b0fb193da319dd2cb35683643b4eec2d4e
+archived-with: 2026-06-16-migrate-bun-monorepo
 ---
 
 # Migrate Bun Monorepo Implementation Plan
@@ -13,8 +14,6 @@ base-ref: eefeb0b0fb193da319dd2cb35683643b4eec2d4e
 **Architecture:** The repository root becomes a private Bun workspace orchestrator. The product package moves intact to `packages/pilot`, owns runtime dependencies and CLI bin metadata, and root scripts delegate into it.
 
 **Tech Stack:** Bun 1.3.13, TypeScript, Bun test, OpenSpec, Comet.
-
----
 
 ## File Structure
 
@@ -413,25 +412,25 @@ git diff --check
 openspec validate --all --strict
 ```
 
-- [ ] **Step 2: Archive the change**
+- [x] **Step 2: Archive the change**
 
 Use `comet-archive` after verify passes. Expected: delta specs sync into `openspec/specs`, design/plan metadata are marked archived, and the change moves to `openspec/changes/archive/2026-06-16-migrate-bun-monorepo/`.
 
-- [ ] **Step 3: Merge into main**
+- [x] **Step 3: Merge into main**
 
-Run after archive commit exists:
+Run after verify passes:
 
 ```bash
 git fetch origin --prune
 git checkout main
-git merge design-openai-auth-code-agent
+git merge --ff-only migrate-bun-monorepo
 bun run test
 bun run typecheck
 bun run build
 openspec validate --all --strict
 ```
 
-Expected: merge succeeds and validation passes on `main`.
+Expected: merge succeeds and validation passes on `main`. This was completed before archive so Comet could mark `branch_status: handled`.
 
 - [ ] **Step 4: Push main**
 
