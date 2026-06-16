@@ -74,7 +74,6 @@ Out of scope:
 - `.pilot` remains the product runtime state root; Pi auth/config remains Pi-owned so Codex login can be reused.
 - README run instructions need to distinguish interactive `bun run pilot` from explicit command invocations such as `bun run pilot -- --help` and `bun run pilot -- run "..."`.
 ```
-
 ## openspec/changes/pilot-interactive-shell/design.md
 
 - Source: openspec/changes/pilot-interactive-shell/design.md
@@ -332,4 +331,3 @@ The CLI SHALL store product-owned workspace session state under `.pilot`.
 - **WHEN** local grep or glob tools enumerate workspace files
 - **THEN** they skip `.pilot` runtime state alongside `.git` and `node_modules`
 ```
-
