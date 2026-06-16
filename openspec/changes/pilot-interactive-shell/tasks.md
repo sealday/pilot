@@ -12,13 +12,13 @@
 
 ## 3. Compatibility
 
-- [ ] 3.1 Preserve `pilot --help`, `pilot auth ...`, `pilot run ...`, and `pilot memory ...` behavior.
-- [ ] 3.2 Keep redaction on pilot-owned command output and error paths.
-- [ ] 3.3 Keep existing `pilot run` behavior unless the Pi runtime bridge can be safely shared in this change.
+- [x] 3.1 Preserve `pilot --help`, `pilot auth ...`, `pilot run ...`, and `pilot memory ...` behavior.
+- [x] 3.2 Keep redaction on pilot-owned command output and error paths.
+- [x] 3.3 Keep existing `pilot run` behavior unless the Pi runtime bridge can be safely shared in this change.
 
 ## 4. Tests And Documentation
 
-- [ ] 4.1 Add unit tests for no-argument interactive dispatch and fake-runner injection.
-- [ ] 4.2 Add tests for explicit help and explicit subcommand routing.
-- [ ] 4.3 Update README with `bun run pilot` interactive usage and explicit command examples.
-- [ ] 4.4 Run `bun run test`, `bun run typecheck`, `bun run build`, `openspec validate`, and a help-command smoke test.
+- [x] 4.1 Add unit tests for no-argument interactive dispatch and fake-runner injection.
+- [x] 4.2 Add tests for explicit help and explicit subcommand routing.
+- [x] 4.3 Update README with `bun run pilot` interactive usage and explicit command examples.
+- [x] 4.4 Run `bun run test`, `bun run typecheck`, `bun run build`, `openspec validate`, and a help-command smoke test.

@@ -11,6 +11,7 @@ bun install
 bun run test
 bun run typecheck
 bun run build
+bun run pilot
 bun run pilot -- --help
 bun run pilot -- run "inspect this project"
 ```
@@ -30,10 +31,22 @@ API-key fallback code is present for harness tests, but real credentials should 
 ## Run Behavior
 
 ```bash
+bun run pilot
+```
+
+The default command opens the Pi-backed interactive coding-agent interface. It reuses Pi's Codex login and interactive runtime. Pi/Codex auth and config remain in Pi's normal config/auth location; they are not moved into `.pilot`. Only delegated interactive session artifacts are stored under `.pilot/pi-sessions` unless `PI_CODING_AGENT_SESSION_DIR` is already set.
+
+Explicit pilot commands remain available:
+
+```bash
+bun run pilot -- --help
+bun run pilot -- auth status
+bun run pilot -- memory list
+bun run pilot -- memory forget <id>
 bun run pilot -- run "inspect this project"
 ```
 
-By default this exits nonzero with a blocked result because the real Pi adapter is not connected. This is intentional; the harness must not fake a successful agent run in production.
+The explicit `pilot run` harness path still exits nonzero with a blocked result by default because the real `PiAgentAdapter` is not connected. This is intentional; the harness must not fake a successful agent run in production.
 
 Local tool execution is available behind `SessionRunner` for adapters that emit structured tool calls. The first-release tool surface includes:
 
