@@ -1,6 +1,6 @@
 ## 1. Spec And Dispatch Contract
 
-- [ ] 1.1 Add delta specs for `repository-workspace`, `coding-harness-loop`, and `openai-auth`.
+- [x] 1.1 Add delta specs for `repository-workspace`, `coding-harness-loop`, and `openai-auth`.
 - [ ] 1.2 Update CLI help/run expectations so no-argument `pilot` is interactive and explicit `--help` remains help.
 
 ## 2. Pi Interactive Delegation
