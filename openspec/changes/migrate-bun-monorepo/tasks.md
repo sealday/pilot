@@ -8,15 +8,15 @@
 ## 2. Root Run Surface
 
 - [x] 2.1 Add root scripts for test, typecheck, build, lint, and direct CLI execution.
-- [ ] 2.2 Update README with root-level Bun install, validation, and run commands.
-- [ ] 2.3 Ensure generated build artifacts and package-local runtime state remain ignored.
+- [x] 2.2 Update README with root-level Bun install, validation, and run commands.
+- [x] 2.3 Ensure generated build artifacts and package-local runtime state remain ignored.
 
 ## 3. Validation
 
 - [ ] 3.1 Run and fix root-level `bun run test`.
 - [ ] 3.2 Run and fix root-level `bun run typecheck`.
 - [ ] 3.3 Run and fix root-level `bun run build`.
-- [ ] 3.4 Smoke-test direct CLI execution from the repository root with Bun.
+- [x] 3.4 Smoke-test direct CLI execution from the repository root with Bun.
 
 ## 4. Delivery
 

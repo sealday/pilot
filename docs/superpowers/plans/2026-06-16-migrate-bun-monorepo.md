@@ -264,7 +264,7 @@ git commit -m "Rename product surface to pilot" \
 - Modify: `.gitignore`
 - Modify: `openspec/changes/migrate-bun-monorepo/tasks.md`
 
-- [ ] **Step 1: Update `.gitignore`**
+- [x] **Step 1: Update `.gitignore`**
 
 Ensure generated artifacts and runtime state are ignored:
 
@@ -278,7 +278,7 @@ packages/*/.pilot/
 
 Remove `.pi-code/` unless kept only as a legacy local cleanup note. The repo should not document `.pi-code` as active state.
 
-- [ ] **Step 2: Update README commands**
+- [x] **Step 2: Update README commands**
 
 Update README to describe `pilot`, root-level Bun commands, and `.pilot` transcript storage. Required command block:
 
@@ -299,11 +299,11 @@ pilot auth status
 pilot auth logout
 ```
 
-- [ ] **Step 3: Mark implementation tasks complete as they are verified**
+- [x] **Step 3: Mark implementation tasks complete as they are verified**
 
 In `openspec/changes/migrate-bun-monorepo/tasks.md`, mark completed tasks with `[x]` only after their verification command has passed.
 
-- [ ] **Step 4: Run root command smoke checks**
+- [x] **Step 4: Run root command smoke checks**
 
 Run:
 
@@ -321,7 +321,7 @@ bun run pilot -- run "inspect this project"
 
 Expected: exit code 1 and JSON output contains `"status": "blocked"`.
 
-- [ ] **Step 5: Commit docs and root surface**
+- [x] **Step 5: Commit docs and root surface**
 
 ```bash
 git add README.md .gitignore openspec/changes/migrate-bun-monorepo/tasks.md
