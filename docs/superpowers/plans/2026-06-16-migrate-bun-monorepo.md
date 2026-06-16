@@ -38,7 +38,7 @@ base-ref: eefeb0b0fb193da319dd2cb35683643b4eec2d4e
 - Create: `package.json`
 - Modify: `bun.lock`
 
-- [ ] **Step 1: Move product-owned files**
+- [x] **Step 1: Move product-owned files**
 
 ```bash
 mkdir -p packages/pilot
@@ -48,7 +48,7 @@ git mv tsconfig.json packages/pilot/tsconfig.json
 git mv package.json packages/pilot/package.json
 ```
 
-- [ ] **Step 2: Replace the root package manifest**
+- [x] **Step 2: Replace the root package manifest**
 
 Write `package.json` exactly as:
 
@@ -61,16 +61,16 @@ Write `package.json` exactly as:
     "packages/*"
   ],
   "scripts": {
-    "build": "bun --cwd packages/pilot run build",
+    "build": "bun --cwd=packages/pilot run build",
     "lint": "bun run typecheck",
-    "pilot": "bun --cwd packages/pilot run cli",
-    "test": "bun --cwd packages/pilot run test",
-    "typecheck": "bun --cwd packages/pilot run typecheck"
+    "pilot": "bun --cwd=packages/pilot run cli",
+    "test": "bun --cwd=packages/pilot run test",
+    "typecheck": "bun --cwd=packages/pilot run typecheck"
   }
 }
 ```
 
-- [ ] **Step 3: Update `packages/pilot/package.json`**
+- [x] **Step 3: Update `packages/pilot/package.json`**
 
 Write `packages/pilot/package.json` exactly as:
 
@@ -102,7 +102,7 @@ Write `packages/pilot/package.json` exactly as:
 }
 ```
 
-- [ ] **Step 4: Regenerate workspace install metadata**
+- [x] **Step 4: Regenerate workspace install metadata**
 
 Run:
 
@@ -112,17 +112,17 @@ bun install
 
 Expected: lockfile is updated for the workspace root and no install error occurs.
 
-- [ ] **Step 5: Verify package-local tests still resolve after the move**
+- [x] **Step 5: Verify package-local tests still resolve after the move**
 
 Run:
 
 ```bash
-bun --cwd packages/pilot run test
+bun --cwd=packages/pilot run test
 ```
 
 Expected: tests may fail only on expected `pi-code` to `pilot` naming assertions. Import resolution and TypeScript module paths must not fail.
 
-- [ ] **Step 6: Commit the package move**
+- [x] **Step 6: Commit the package move**
 
 ```bash
 git add package.json packages/pilot bun.lock
@@ -132,7 +132,7 @@ git commit -m "Move CLI into pilot workspace" \
   -m "Confidence: high" \
   -m "Scope-risk: moderate" \
   -m "Directive: Add future product dependencies to packages/pilot unless they are true root tooling." \
-  -m "Tested: bun install; bun --cwd packages/pilot run test." \
+  -m "Tested: bun install; bun --cwd=packages/pilot run test." \
   -m "Not-tested: Root scripts are added in this commit but fully smoke-tested after product rename."
 ```
 
@@ -228,7 +228,7 @@ Do not rename `PiCodexAuthAdapter`, `pi-codex-auth-adapter.ts`, or `openai-codex
 Run:
 
 ```bash
-bun --cwd packages/pilot test tests/cli-help.test.ts tests/e2e-smoke.test.ts tests/session-runner.test.ts tests/memory-gate.test.ts
+bun --cwd=packages/pilot test tests/cli-help.test.ts tests/e2e-smoke.test.ts tests/session-runner.test.ts tests/memory-gate.test.ts
 ```
 
 Expected: all targeted tests pass.
@@ -253,7 +253,7 @@ git commit -m "Rename product surface to pilot" \
   -m "Confidence: high" \
   -m "Scope-risk: moderate" \
   -m "Directive: Keep PiCodex naming only for upstream Pi auth boundaries, not product commands." \
-  -m "Tested: bun --cwd packages/pilot test tests/cli-help.test.ts tests/e2e-smoke.test.ts tests/session-runner.test.ts tests/memory-gate.test.ts; rg -n \"pi-code|\\\\.pi-code\" packages/pilot/src packages/pilot/tests." \
+  -m "Tested: bun --cwd=packages/pilot test tests/cli-help.test.ts tests/e2e-smoke.test.ts tests/session-runner.test.ts tests/memory-gate.test.ts; rg -n \"pi-code|\\\\.pi-code\" packages/pilot/src packages/pilot/tests." \
   -m "Not-tested: Root README commands and OpenSpec archive are handled in later tasks."
 ```
 
