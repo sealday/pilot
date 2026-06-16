@@ -13,9 +13,9 @@
 
 ## 3. Validation
 
-- [ ] 3.1 Run and fix root-level `bun run test`.
-- [ ] 3.2 Run and fix root-level `bun run typecheck`.
-- [ ] 3.3 Run and fix root-level `bun run build`.
+- [x] 3.1 Run and fix root-level `bun run test`.
+- [x] 3.2 Run and fix root-level `bun run typecheck`.
+- [x] 3.3 Run and fix root-level `bun run build`.
 - [x] 3.4 Smoke-test direct CLI execution from the repository root with Bun.
 
 ## 4. Delivery

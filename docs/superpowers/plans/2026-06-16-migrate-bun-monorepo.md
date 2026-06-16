@@ -340,7 +340,7 @@ git commit -m "Document pilot root commands" \
 **Files:**
 - Modify: `openspec/changes/migrate-bun-monorepo/tasks.md`
 
-- [ ] **Step 1: Run full root validation**
+- [x] **Step 1: Run full root validation**
 
 Run:
 
@@ -354,7 +354,7 @@ openspec validate --all --strict
 
 Expected: all commands pass.
 
-- [ ] **Step 2: Confirm live source/tests do not expose the old product name**
+- [x] **Step 2: Confirm live source/tests do not expose the old product name**
 
 Run:
 
@@ -364,11 +364,11 @@ rg -n -P "pi-code(?!x)|\\.pi-code" package.json README.md packages/pilot/src pac
 
 Expected: no matches in live root manifest, README, package source, package tests, or main specs after archive. Before archive, matches in `openspec/specs` are acceptable only if the delta specs are present and `openspec validate --all --strict` passes; record that in the commit message.
 
-- [ ] **Step 3: Mark all build tasks complete**
+- [x] **Step 3: Mark all build tasks complete**
 
 Update `openspec/changes/migrate-bun-monorepo/tasks.md` so tasks 1.1 through 3.4 are `[x]`. Leave delivery tasks 4.1 through 4.3 unchecked until merge/push/remote cleanup actually complete.
 
-- [ ] **Step 4: Commit final build state**
+- [x] **Step 4: Commit final build state**
 
 ```bash
 git add openspec/changes/migrate-bun-monorepo/tasks.md
