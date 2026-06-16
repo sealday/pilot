@@ -1,7 +1,7 @@
 workflow: full
 phase: build
-build_mode: null
-isolation: null
+build_mode: subagent-driven-development
+isolation: branch
 verify_mode: null
 base_ref: 1a4765252f43792aee4c440a7f6e02a05c0e59f5
 design_doc: docs/superpowers/specs/2026-06-16-migrate-bun-monorepo-design.md
