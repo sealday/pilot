@@ -3,7 +3,7 @@
 - [x] 1.1 Convert root `package.json` into a private Bun workspace root with `workspaces` configured.
 - [x] 1.2 Move the existing CLI package files into `packages/pilot`.
 - [x] 1.3 Update package-local `tsconfig`, scripts, bin metadata, and build output paths for the new package location.
-- [ ] 1.4 Rename the user-facing package, binary, help text, README examples, and local state path from `pi-code` / `.pi-code` to `pilot` / `.pilot`.
+- [x] 1.4 Rename the user-facing package, binary, help text, README examples, and local state path from `pi-code` / `.pi-code` to `pilot` / `.pilot`.
 
 ## 2. Root Run Surface
 

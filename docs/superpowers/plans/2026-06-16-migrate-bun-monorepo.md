@@ -148,7 +148,7 @@ git commit -m "Move CLI into pilot workspace" \
 - Modify: `packages/pilot/src/tools/local-execution.ts`
 - Modify: `packages/pilot/tests/*.test.ts`
 
-- [ ] **Step 1: Update CLI help and usage strings**
+- [x] **Step 1: Update CLI help and usage strings**
 
 Replace user-facing `pi-code` command strings with `pilot` in:
 
@@ -170,7 +170,7 @@ pilot memory list
 pilot memory forget <id>
 ```
 
-- [ ] **Step 2: Update local state paths**
+- [x] **Step 2: Update local state paths**
 
 In `packages/pilot/src/storage/paths.ts`, change product-owned config and workspace state from `.pi-code` to `.pilot`:
 
@@ -186,7 +186,7 @@ export function workspaceSessionDir(deps: PathDeps = {}): string {
 
 If no code imports `piCodeConfigDir`, rename it to `pilotConfigDir`. If an import exists, update the import site in the same step.
 
-- [ ] **Step 3: Update transcript persistence**
+- [x] **Step 3: Update transcript persistence**
 
 In `packages/pilot/src/agent/session-runner.ts`, write transcripts under:
 
@@ -194,7 +194,7 @@ In `packages/pilot/src/agent/session-runner.ts`, write transcripts under:
 join(this.cwd, ".pilot", "sessions", transcript.sessionId, "transcript.json")
 ```
 
-- [ ] **Step 4: Update the stable system prompt**
+- [x] **Step 4: Update the stable system prompt**
 
 In `packages/pilot/src/agent/system-prompt.ts`, use:
 
@@ -202,7 +202,7 @@ In `packages/pilot/src/agent/system-prompt.ts`, use:
 "You are pilot, a narrow coding agent harness."
 ```
 
-- [ ] **Step 5: Update local search skips**
+- [x] **Step 5: Update local search skips**
 
 In `packages/pilot/src/tools/local-execution.ts`, skip `.pilot`:
 
@@ -212,7 +212,7 @@ if (entry.name === ".git" || entry.name === "node_modules" || entry.name === ".p
 }
 ```
 
-- [ ] **Step 6: Update package-local tests**
+- [x] **Step 6: Update package-local tests**
 
 Replace live product assertions:
 
@@ -223,7 +223,7 @@ pi-code -> pilot
 
 Do not rename `PiCodexAuthAdapter`, `pi-codex-auth-adapter.ts`, or `openai-codex` because those are Pi integration names.
 
-- [ ] **Step 7: Run targeted rename tests**
+- [x] **Step 7: Run targeted rename tests**
 
 Run:
 
@@ -233,7 +233,7 @@ bun --cwd=packages/pilot test tests/cli-help.test.ts tests/e2e-smoke.test.ts tes
 
 Expected: all targeted tests pass.
 
-- [ ] **Step 8: Confirm no live old-name strings remain in implementation/tests**
+- [x] **Step 8: Confirm no live old-name strings remain in implementation/tests**
 
 Run:
 
@@ -243,7 +243,7 @@ rg -n -P "pi-code(?!x)|\\.pi-code" packages/pilot/src packages/pilot/tests
 
 Expected: no old product-name matches. The negative lookahead intentionally preserves `pi-codex-*` auth boundary references.
 
-- [ ] **Step 9: Commit the product rename**
+- [x] **Step 9: Commit the product rename**
 
 ```bash
 git add packages/pilot
