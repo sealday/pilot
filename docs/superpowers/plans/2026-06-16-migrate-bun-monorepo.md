@@ -399,7 +399,7 @@ Expected: build guard passes and `.comet.yaml` moves to `phase: verify`.
 - Create: `docs/superpowers/reports/2026-06-16-migrate-bun-monorepo-verify.md`
 - Modify through archive: `openspec/specs/**`, `docs/superpowers/specs/2026-06-16-migrate-bun-monorepo-design.md`, `docs/superpowers/plans/2026-06-16-migrate-bun-monorepo.md`, `openspec/changes/archive/**`
 
-- [ ] **Step 1: Run Comet verify**
+- [x] **Step 1: Run Comet verify**
 
 Use `comet-verify`. The verification report must record:
 
