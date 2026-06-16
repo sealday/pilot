@@ -2,8 +2,8 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 
 export type PathDeps = {
-  homeDir?: string;
-  cwd?: string;
+  homeDir?: string | undefined;
+  cwd?: string | undefined;
 };
 
 export function expandHome(path: string, deps: PathDeps = {}): string {
@@ -30,4 +30,8 @@ export function pilotConfigDir(deps: PathDeps = {}): string {
 
 export function workspaceSessionDir(deps: PathDeps = {}): string {
   return join(deps.cwd ?? process.cwd(), ".pilot", "sessions");
+}
+
+export function workspacePiSessionDir(deps: PathDeps = {}): string {
+  return join(deps.cwd ?? process.cwd(), ".pilot", "pi-sessions");
 }
