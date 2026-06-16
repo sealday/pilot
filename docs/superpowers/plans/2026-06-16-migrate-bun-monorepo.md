@@ -382,7 +382,7 @@ git commit -m "Verify pilot monorepo migration" \
   -m "Not-tested: Live Pi model streaming remains behind the existing adapter boundary."
 ```
 
-- [ ] **Step 5: Run Comet build guard**
+- [x] **Step 5: Run Comet build guard**
 
 Run:
 
