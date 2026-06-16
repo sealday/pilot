@@ -8,7 +8,7 @@
   "scripts": {
     "build": "bun --cwd=packages/pilot run build",
     "lint": "bun run typecheck",
-    "pilot": "bun --cwd=packages/pilot run cli",
+    "pilot": "bun packages/pilot/src/cli/index.ts",
     "test": "bun --cwd=packages/pilot run test",
     "typecheck": "bun --cwd=packages/pilot run typecheck"
   }

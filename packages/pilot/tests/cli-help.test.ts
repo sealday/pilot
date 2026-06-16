@@ -38,9 +38,21 @@ describe("CLI help", () => {
   test("does not delegate explicit pilot commands to the Pi interactive runner", async () => {
     const calls: string[][] = [];
 
-    const help = await main(["--help"], { piInteractive: async (args) => calls.push(args) });
-    const runUsage = await main(["run"], { piInteractive: async (args) => calls.push(args) });
-    const memoryUsage = await main(["memory", "forget"], { piInteractive: async (args) => calls.push(args) });
+    const help = await main(["--help"], {
+      piInteractive: async (args) => {
+        calls.push(args);
+      },
+    });
+    const runUsage = await main(["run"], {
+      piInteractive: async (args) => {
+        calls.push(args);
+      },
+    });
+    const memoryUsage = await main(["memory", "forget"], {
+      piInteractive: async (args) => {
+        calls.push(args);
+      },
+    });
 
     expect(help.exitCode).toBe(0);
     expect(runUsage.output).toContain("Usage: pilot run [prompt]");
