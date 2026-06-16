@@ -13,13 +13,13 @@ export type CliResult = {
 export function formatHelp(): string {
   return [
     "Usage:",
-    "  pi-code auth login",
-    "  pi-code auth status",
-    "  pi-code auth logout",
-    "  pi-code run [prompt]",
-    "  pi-code resume [session-id]",
-    "  pi-code memory list",
-    "  pi-code memory forget <id>",
+    "  pilot auth login",
+    "  pilot auth status",
+    "  pilot auth logout",
+    "  pilot run [prompt]",
+    "  pilot resume [session-id]",
+    "  pilot memory list",
+    "  pilot memory forget <id>",
   ].join("\n");
 }
 

@@ -14,7 +14,7 @@ export async function memoryCommand(args: string[]): Promise<CliResult> {
     const id = args[1];
 
     if (id === undefined) {
-      return { exitCode: 1, output: "Usage: pi-code memory forget <id>" };
+      return { exitCode: 1, output: "Usage: pilot memory forget <id>" };
     }
 
     if (!MEMORY_ID_PATTERN.test(id)) {

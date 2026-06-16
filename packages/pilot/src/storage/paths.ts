@@ -24,10 +24,10 @@ export function piAuthPath(deps: PathDeps = {}): string {
   return join(deps.homeDir ?? homedir(), ".pi", "agent", "auth.json");
 }
 
-export function piCodeConfigDir(deps: PathDeps = {}): string {
-  return join(deps.homeDir ?? homedir(), ".pi-code");
+export function pilotConfigDir(deps: PathDeps = {}): string {
+  return join(deps.homeDir ?? homedir(), ".pilot");
 }
 
 export function workspaceSessionDir(deps: PathDeps = {}): string {
-  return join(deps.cwd ?? process.cwd(), ".pi-code", "sessions");
+  return join(deps.cwd ?? process.cwd(), ".pilot", "sessions");
 }

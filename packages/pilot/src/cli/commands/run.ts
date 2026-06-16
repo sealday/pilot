@@ -15,7 +15,7 @@ export async function runCommand(args: string[], deps: RunCommandDeps = {}): Pro
   if (prompt.length === 0) {
     return {
       exitCode: 1,
-      output: "Usage: pi-code run [prompt]",
+      output: "Usage: pilot run [prompt]",
     };
   }
 

@@ -203,7 +203,7 @@ async function listWorkspaceFiles(root: string, workspace: string): Promise<stri
   const files: string[] = [];
 
   for (const entry of entries) {
-    if (entry.name === ".git" || entry.name === "node_modules" || entry.name === ".pi-code") {
+    if (entry.name === ".git" || entry.name === "node_modules" || entry.name === ".pilot") {
       continue;
     }
 

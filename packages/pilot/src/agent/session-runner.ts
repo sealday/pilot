@@ -4,6 +4,7 @@ import { parseFinishPayload, type FinishPayload } from "./finish-tool.js";
 import { StubPiAgentAdapter, type PiAgentAdapter, type PiToolCall } from "./pi-agent-adapter.js";
 import { appendTranscriptEvent, createTranscript, type Transcript } from "../context/transcript.js";
 import { writeJson } from "../storage/json-db.js";
+import { workspaceSessionDir } from "../storage/paths.js";
 import { fileRead, gitRead, globSearch, grepSearch, patchEdit, shellExecute, webFetch, type LocalToolDeps } from "../tools/local-execution.js";
 import { todoWrite, type TodoItem } from "../tools/todo-write.js";
 
@@ -151,7 +152,7 @@ export class SessionRunner {
 
   private async persistTranscript(transcript: Transcript): Promise<void> {
     await writeJson(
-      join(this.cwd, ".pi-code", "sessions", transcript.sessionId, "transcript.json"),
+      join(workspaceSessionDir({ cwd: this.cwd }), transcript.sessionId, "transcript.json"),
       redactTranscript(transcript),
     );
   }

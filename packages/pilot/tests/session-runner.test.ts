@@ -8,7 +8,7 @@ import { SessionRunner } from "../src/agent/session-runner.js";
 import type { PiAgentAdapter } from "../src/agent/pi-agent-adapter.js";
 
 async function tempWorkspace(): Promise<string> {
-  return mkdtemp(join(tmpdir(), "pi-code-runner-"));
+  return mkdtemp(join(tmpdir(), "pilot-runner-"));
 }
 
 describe("SessionRunner", () => {
@@ -33,7 +33,7 @@ describe("SessionRunner", () => {
     expect(eventTypes).toEqual(["user", "assistant", "tool", "finish"]);
     expect(result.transcript.events.every((event) => event.timestamp === "2026-06-15T00:00:00.000Z")).toBe(true);
 
-    const persisted = JSON.parse(await readFile(join(cwd, ".pi-code", "sessions", "session-test", "transcript.json"), "utf8"));
+    const persisted = JSON.parse(await readFile(join(cwd, ".pilot", "sessions", "session-test", "transcript.json"), "utf8"));
     expect(persisted.events.map((event: { type: string }) => event.type)).toEqual(eventTypes);
   });
 
@@ -112,7 +112,7 @@ describe("runCommand", () => {
     expect(payload).not.toHaveProperty("transcript");
   });
 
-  test("pi-code run defaults to blocked when no real adapter is connected", async () => {
+  test("pilot run defaults to blocked when no real adapter is connected", async () => {
     const result = await main(["run", "inspect"]);
 
     expect(result.exitCode).toBe(1);
@@ -137,7 +137,7 @@ describe("runCommand", () => {
     const result = await runCommand([]);
 
     expect(result.exitCode).toBe(1);
-    expect(result.output).toContain("Usage: pi-code run [prompt]");
+    expect(result.output).toContain("Usage: pilot run [prompt]");
   });
 });
 

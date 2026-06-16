@@ -47,7 +47,7 @@ describe("memoryCommand", () => {
   test("validates forget ids", async () => {
     expect(await main(["memory", "forget"])).toEqual({
       exitCode: 1,
-      output: "Usage: pi-code memory forget <id>",
+      output: "Usage: pilot memory forget <id>",
     });
     expect(await main(["memory", "forget", "../secret"])).toEqual({
       exitCode: 1,

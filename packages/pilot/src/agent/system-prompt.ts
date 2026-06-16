@@ -1,6 +1,6 @@
 export function buildStablePrefix(): string {
   return [
-    "You are pi-code, a narrow coding agent harness.",
+    "You are pilot, a narrow coding agent harness.",
     "Use the smallest sufficient tool set.",
     "Preserve user work and stay inside the assigned workspace.",
     "Finish only by calling the structured finish tool.",

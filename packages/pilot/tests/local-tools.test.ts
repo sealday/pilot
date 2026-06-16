@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { fileRead, gitRead, globSearch, grepSearch, patchEdit, shellExecute, webFetch } from "../src/tools/local-execution.js";
 
 async function tempWorkspace(): Promise<string> {
-  return mkdtemp(join(tmpdir(), "pi-code-tools-"));
+  return mkdtemp(join(tmpdir(), "pilot-tools-"));
 }
 
 async function pathExists(path: string): Promise<boolean> {
@@ -24,7 +24,7 @@ describe("local tool execution", () => {
 
   test("rejects file reads through workspace symlinks", async () => {
     const workspace = await tempWorkspace();
-    const outside = await mkdtemp(join(tmpdir(), "pi-code-outside-"));
+    const outside = await mkdtemp(join(tmpdir(), "pilot-outside-"));
     await writeFile(join(outside, "secret.txt"), "secret\n", "utf8");
     await symlink(join(outside, "secret.txt"), join(workspace, "link.txt"));
 
@@ -33,7 +33,7 @@ describe("local tool execution", () => {
 
   test("rejects patch edits through workspace symlinks", async () => {
     const workspace = await tempWorkspace();
-    const outside = await mkdtemp(join(tmpdir(), "pi-code-outside-"));
+    const outside = await mkdtemp(join(tmpdir(), "pilot-outside-"));
     const outsideFile = join(outside, "secret.txt");
     await writeFile(outsideFile, "alpha\n", "utf8");
     await symlink(outsideFile, join(workspace, "link.txt"));
@@ -46,7 +46,7 @@ describe("local tool execution", () => {
 
   test("rejects grep roots that are symlinked directories", async () => {
     const workspace = await tempWorkspace();
-    const outside = await mkdtemp(join(tmpdir(), "pi-code-outside-"));
+    const outside = await mkdtemp(join(tmpdir(), "pilot-outside-"));
     await writeFile(join(outside, "secret.txt"), "needle outside\n", "utf8");
     await symlink(outside, join(workspace, "linked"));
 
@@ -104,6 +104,22 @@ describe("local tool execution", () => {
     });
   });
 
+  test("grep and glob skip pilot state while scanning legacy state normally", async () => {
+    const workspace = await tempWorkspace();
+    const legacyStateDir = [".pi", "code"].join("-");
+    await mkdir(join(workspace, ".pilot"));
+    await mkdir(join(workspace, legacyStateDir));
+    await writeFile(join(workspace, ".pilot", "hidden.txt"), "needle hidden\n", "utf8");
+    await writeFile(join(workspace, legacyStateDir, "visible.txt"), "needle visible\n", "utf8");
+
+    await expect(grepSearch({ pattern: "needle", path: "." }, { workspace })).resolves.toEqual({
+      matches: [{ path: `${legacyStateDir}/visible.txt`, line: 1, text: "needle visible" }],
+    });
+    await expect(globSearch({ pattern: "**/*.txt" }, { workspace })).resolves.toEqual({
+      paths: [`${legacyStateDir}/visible.txt`],
+    });
+  });
+
   test("git supports read-only status operations", async () => {
     const workspace = await tempWorkspace();
     await Bun.spawn(["git", "init"], { cwd: workspace }).exited;
@@ -118,7 +134,7 @@ describe("local tool execution", () => {
 
   test("git rejects mutating commands and write-capable diff options", async () => {
     const workspace = await tempWorkspace();
-    const outside = join(await mkdtemp(join(tmpdir(), "pi-code-git-outside-")), "diff.txt");
+    const outside = join(await mkdtemp(join(tmpdir(), "pilot-git-outside-")), "diff.txt");
 
     await expect(gitRead({ args: ["branch", "new-branch"] }, { workspace })).rejects.toThrow(
       "git tool only supports safe read-only status/diff style operations",

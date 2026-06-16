@@ -7,7 +7,7 @@ import { SessionRunner } from "../src/agent/session-runner.js";
 import type { PiAgentAdapter } from "../src/agent/pi-agent-adapter.js";
 
 async function tempWorkspace(): Promise<string> {
-  return mkdtemp(join(tmpdir(), "pi-code-e2e-"));
+  return mkdtemp(join(tmpdir(), "pilot-e2e-"));
 }
 
 describe("e2e smoke", () => {
@@ -15,8 +15,8 @@ describe("e2e smoke", () => {
     const result = await main(["--help"]);
 
     expect(result.exitCode).toBe(0);
-    expect(result.output).toContain("pi-code run [prompt]");
-    expect(result.output).toContain("pi-code auth login");
+    expect(result.output).toContain("pilot run [prompt]");
+    expect(result.output).toContain("pilot auth login");
   });
 
   test("default run blocks instead of faking completion", async () => {
@@ -71,7 +71,7 @@ describe("e2e smoke", () => {
 
     await runner.run(`fetch ${secret}`);
 
-    const persisted = await readFile(join(cwd, ".pi-code", "sessions", "redacted-session", "transcript.json"), "utf8");
+    const persisted = await readFile(join(cwd, ".pilot", "sessions", "redacted-session", "transcript.json"), "utf8");
     expect(persisted).not.toContain(secret);
     expect(persisted).toContain("[REDACTED]");
   });

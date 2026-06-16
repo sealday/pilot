@@ -4,16 +4,16 @@ import { formatHelp, main } from "../src/cli/index.js";
 describe("CLI help", () => {
   test("lists first-release commands", () => {
     const help = formatHelp();
-    expect(help).toContain("pi-code auth login");
-    expect(help).toContain("pi-code run [prompt]");
-    expect(help).toContain("pi-code memory list");
+    expect(help).toContain("pilot auth login");
+    expect(help).toContain("pilot run [prompt]");
+    expect(help).toContain("pilot memory list");
   });
 
   test("returns help for empty and flag invocations", async () => {
     for (const argv of [[], ["--help"], ["-h"]]) {
       const result = await main(argv);
       expect(result.exitCode).toBe(0);
-      expect(result.output).toContain("pi-code auth status");
+      expect(result.output).toContain("pilot auth status");
     }
   });
 
@@ -21,7 +21,7 @@ describe("CLI help", () => {
     const result = await main(["bad"]);
     expect(result.exitCode).toBe(1);
     expect(result.output).toContain("Unknown command: bad");
-    expect(result.output).toContain("pi-code run [prompt]");
+    expect(result.output).toContain("pilot run [prompt]");
   });
 
   test("redacts secret-like unknown command arguments", async () => {

@@ -1,6 +1,6 @@
 import type { AuthStatus } from "../../auth/auth-status.js";
 import { apiKeyFallbackStatus, type ApiKeyEnv } from "../../auth/api-key-fallback.js";
-import { PiCodexAuthAdapter } from "../../auth/pi-codex-auth-adapter.js";
+import { PiCodexAuthAdapter } from "../../auth/pi-auth-adapter.js";
 import { redactSecrets } from "../../auth/token-redaction.js";
 
 export type AuthCommandResult = {
