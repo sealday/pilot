@@ -238,10 +238,10 @@ Expected: all targeted tests pass.
 Run:
 
 ```bash
-rg -n "pi-code|\\.pi-code" packages/pilot/src packages/pilot/tests
+rg -n -P "pi-code(?!x)|\\.pi-code" packages/pilot/src packages/pilot/tests
 ```
 
-Expected: no matches except temporary directory prefixes in tests are allowed only if they are not user-visible assertions. Prefer renaming those prefixes to `pilot-` too so the command exits with no matches.
+Expected: no old product-name matches. The negative lookahead intentionally preserves `pi-codex-*` auth boundary references.
 
 - [ ] **Step 9: Commit the product rename**
 
@@ -253,7 +253,7 @@ git commit -m "Rename product surface to pilot" \
   -m "Confidence: high" \
   -m "Scope-risk: moderate" \
   -m "Directive: Keep PiCodex naming only for upstream Pi auth boundaries, not product commands." \
-  -m "Tested: bun --cwd=packages/pilot test tests/cli-help.test.ts tests/e2e-smoke.test.ts tests/session-runner.test.ts tests/memory-gate.test.ts; rg -n \"pi-code|\\\\.pi-code\" packages/pilot/src packages/pilot/tests." \
+  -m "Tested: bun --cwd=packages/pilot test tests/cli-help.test.ts tests/e2e-smoke.test.ts tests/session-runner.test.ts tests/memory-gate.test.ts; rg -n -P \"pi-code(?!x)|\\\\.pi-code\" packages/pilot/src packages/pilot/tests." \
   -m "Not-tested: Root README commands and OpenSpec archive are handled in later tasks."
 ```
 
